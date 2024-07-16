@@ -7,13 +7,13 @@ namespace AvionEngine
     public class EngineObject
     {
         public Transform<float, float, float> Transform { get; set; } = new Transform<float, float, float>();
-        public IRenderer Renderer { get; set; }
+        public IEngine Engine { get; set; }
 
         private List<Component> components = new List<Component>();
 
-        public EngineObject(IRenderer renderer)
+        public EngineObject(IEngine engine)
         {
-            Renderer = renderer;
+            Engine = engine;
         }
 
         public void AddComponent(Component component)

@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using Silk.NET.Windowing;
+using System.Drawing;
 
 namespace AvionEngine.Interfaces
 {
     public interface IRenderer
     {
-        List<IShader> Shaders { get; set; }
-        List<EngineObject> Objects { get; set; }
+        Color ClearColor { get; set; }
+
+        IWindow Window { get; }
 
         IShader CreateShader(string vertexCode, string fragmentCode);
 
         void Draw(uint indicesLength);
+
+        void Clear();
     }
 }

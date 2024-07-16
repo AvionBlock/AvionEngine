@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+﻿using Silk.NET.Maths;
 
 namespace AvionEngine.Interfaces
 {
@@ -14,7 +14,11 @@ namespace AvionEngine.Interfaces
 
         void SetFloat(string name, float value);
 
-        void SetUniform4(string name, Matrix4x4 value);
+        void SetUniform2(string name, Matrix2X2<float> value);
+
+        void SetUniform3(string name, Matrix3X3<float> value);
+
+        void SetUniform4(string name, Matrix4X4<float> value);
 
         void Bind();
     }

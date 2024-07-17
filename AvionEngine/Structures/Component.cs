@@ -7,10 +7,10 @@
         public virtual void FixedUpdate()
         { }
 
-        public virtual void Update()
+        public virtual void Update(double delta)
         { }
 
-        public virtual void Render()
+        public virtual void Render(double delta)
         { }
     }
 }

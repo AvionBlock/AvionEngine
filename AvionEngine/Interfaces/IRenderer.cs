@@ -11,8 +11,6 @@ namespace AvionEngine.Interfaces
 
         IShader CreateShader(string vertexCode, string fragmentCode);
 
-        void Draw(uint indicesLength);
-
         void Clear();
     }
 }

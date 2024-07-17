@@ -16,7 +16,7 @@ namespace AvionEngine.OpenGL.Rendering
             Load(vertexCode, fragmentCode);
         }
 
-        public void Bind()
+        public void Render()
         {
             glInstance.UseProgram(id);
         }

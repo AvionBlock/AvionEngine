@@ -12,9 +12,9 @@ namespace AvionEngine.Rendering
             NativeShader = nativeShader;
         }
 
-        public void Bind()
+        public void Render()
         {
-            NativeShader.Bind();
+            NativeShader.Render();
         }
 
         public void Reload(string vertexCode, string fragmentCode)

@@ -23,14 +23,11 @@ namespace AvionEngine.D3D12
             return new OpenGL.Rendering.Shader(glInstance, vertexCode, fragmentCode);
         }
 
-        public unsafe void Draw(uint indicesLength)
-        {
-            glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
-        }
-
         public void Clear()
         {
             glInstance.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
+
+        //glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
     }
 }

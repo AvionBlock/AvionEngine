@@ -1,5 +1,6 @@
 ﻿using AvionEngine.Interfaces;
-using AvionEngine.Rendering;
+using AvionEngine.Structures;
+using System;
 using System.Collections.Generic;
 
 namespace AvionEngine
@@ -7,13 +8,13 @@ namespace AvionEngine
     public class AvionEngine : IEngine
     {
         public IRenderer Renderer { get; private set; } //We can swap out rendering engines.
-        public List<Shader> Shaders { get; set; }
-        public List<EngineObject> EnginObjects { get; set; }
+        public List<EngineObject> EngineObjects { get; set; }
+        public List<Type> ComponentSystems { get; set; }
 
         public AvionEngine(IRenderer renderer)
         {
-            Shaders = new List<Shader>();
-            EnginObjects = new List<EngineObject>();
+            EngineObjects = new List<EngineObject>();
+            ComponentSystems = new List<Type>();
             Renderer = renderer; //Set the renderer the user wants first.
 
             renderer.Window.Update += Update;
@@ -33,16 +34,30 @@ namespace AvionEngine
             //NOT FINISHED!
         }
 
-        public virtual void Update(double obj)
+        public virtual void Update(double delta)
         {
             Renderer.Clear();
+            foreach (var type in ComponentSystems)
+            {
+                var methodInfo = type.GetMethod(nameof(BaseSystem<Component>.Update));
+
+                if (methodInfo != null && methodInfo.IsStatic)
+                {
+                    methodInfo.Invoke(null, new object[] { delta });
+                }
+            }
         }
 
-        private void Render(double obj)
+        private void Render(double delta)
         {
-            for (int i = 0; i < Shaders.Count; i++)
+            foreach (var type in ComponentSystems)
             {
-                Shaders[i].Bind();
+                var methodInfo = type.GetMethod(nameof(BaseSystem<Component>.Render));
+
+                if (methodInfo != null && methodInfo.IsStatic)
+                {
+                    methodInfo.Invoke(null, new object[] { delta });
+                }
             }
         }
     }

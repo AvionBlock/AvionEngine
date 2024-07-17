@@ -2,7 +2,7 @@
 
 namespace AvionEngine.D3D12
 {
-    public class Renderer : IRenderer
+    public class Renderer
     {
         public void AddShader(IShader shader)
         {

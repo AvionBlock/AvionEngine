@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AvionEngine
 {
-    public class AvionEngine
+    public class AvionEngine : IEngine
     {
         public IRenderer Renderer { get; private set; } //We can swap out rendering engines.
 

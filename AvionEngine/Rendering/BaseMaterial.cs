@@ -11,9 +11,9 @@ namespace AvionEngine.Rendering
             Renderable = renderable;
         }
 
-        public virtual void Render()
+        public virtual void Render(double delta)
         {
-            Renderable.Render();
+            Renderable.Render(delta);
         }
     }
 }

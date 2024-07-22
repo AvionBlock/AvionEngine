@@ -20,14 +20,11 @@ namespace AvionEngine.Rendering
             throw new NotImplementedException();
         }
 
-        public virtual void Reload(string vertexCode, string fragmentCode)
+        public virtual void Render(double delta)
         {
-            NativeShader?.Reload(vertexCode, fragmentCode);
+            NativeShader?.Render(delta);
         }
 
-        public virtual void Render()
-        {
-            NativeShader?.Render();
-        }
+        //All other functions could be imported via extensions, We only care about these functions for the BaseShader.
     }
 }

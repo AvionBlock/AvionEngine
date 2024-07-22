@@ -25,7 +25,7 @@ namespace AvionEngine.Components
         {
             foreach (var m in Materials)
             {
-                m.Render();
+                m.Render(delta);
             }
         }
     }

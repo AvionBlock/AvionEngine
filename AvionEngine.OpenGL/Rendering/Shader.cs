@@ -8,17 +8,14 @@ namespace AvionEngine.OpenGL.Rendering
 {
     public class Shader : IShader
     {
-        public BaseShader BaseShader { get; }
-
         private GL glInstance;
         private uint id;
 
         public Shader(GL glInstance, BaseShader baseShader)
         {
             this.glInstance = glInstance;
-            BaseShader = baseShader;
 
-            BaseShader.Load(this, out var vertex, out var fragment);
+            baseShader.Load(this, out var vertex, out var fragment);
             Load(vertex, fragment);
         }
 

@@ -28,20 +28,18 @@ namespace AvionEngine
         public void AddShader(BaseShader baseShader)
         {
             shaders.Add(baseShader);
-            Renderer.AddShader(baseShader);
+            Renderer.CreateShader(baseShader);
         }
 
         public void RemoveShader(BaseShader baseShader)
         {
             shaders.Remove(baseShader);
-            Renderer.RemoveShader(baseShader);
         }
 
         public void SetRenderer(IRenderer renderer)
         {
             Renderer.Window.Update -= Update;
             Renderer.Window.Render -= Render;
-            Renderer.ClearShaders();
 
             Renderer = renderer;
 
@@ -50,7 +48,7 @@ namespace AvionEngine
 
             foreach(var shader in shaders)
             {
-                Renderer.AddShader(shader);
+                Renderer.CreateShader(shader);
             }
             //NOT FINISHED!
         }

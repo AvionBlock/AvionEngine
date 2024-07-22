@@ -5,7 +5,7 @@ namespace AvionEngine.Rendering
 {
     public abstract class BaseShader : IRenderable
     {
-        protected IShader? NativeShader { get; set; } //We can swap out native shaders if we need to.
+        protected IShader? NativeShader { get; set; } //We can swap out native shaders if we need to. Give the option to the user to set or ignore setting the NativeShader.
 
         /// <summary>
         /// Called when a native shader loads the base shader.

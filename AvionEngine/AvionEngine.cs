@@ -41,6 +41,7 @@ namespace AvionEngine
         {
             Renderer.Window.Update -= Update;
             Renderer.Window.Render -= Render;
+            Renderer.ClearShaders();
 
             Renderer = renderer;
 

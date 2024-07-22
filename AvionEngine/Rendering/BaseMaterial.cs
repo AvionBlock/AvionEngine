@@ -2,11 +2,11 @@
 
 namespace AvionEngine.Rendering
 {
-    public class Material : IRenderable
+    public class BaseMaterial : IRenderable
     {
         private IRenderable Renderable { get; set; }
 
-        public Material(IRenderable renderable)
+        public BaseMaterial(IRenderable renderable)
         {
             Renderable = renderable;
         }

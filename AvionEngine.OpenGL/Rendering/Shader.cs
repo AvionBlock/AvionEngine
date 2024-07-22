@@ -19,7 +19,7 @@ namespace AvionEngine.OpenGL.Rendering
             Load(vertex, fragment);
         }
 
-        public void Render()
+        public void Render(double delta)
         {
             glInstance.UseProgram(id);
         }

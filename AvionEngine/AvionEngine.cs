@@ -27,8 +27,8 @@ namespace AvionEngine
 
         public void AddShader(BaseShader baseShader)
         {
-            shaders.Add(baseShader);
             Renderer.CreateShader(baseShader);
+            shaders.Add(baseShader);
         }
 
         public void RemoveShader(BaseShader baseShader)

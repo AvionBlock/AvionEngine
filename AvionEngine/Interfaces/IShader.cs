@@ -1,9 +1,9 @@
-﻿using AvionEngine.Rendering;
-using Silk.NET.Maths;
+﻿using Silk.NET.Maths;
+using System;
 
 namespace AvionEngine.Interfaces
 {
-    public interface IShader : IRenderable
+    public interface IShader : IRenderable, IDisposable
     {
         void Reload(string vertexCode, string fragmentCode);
 

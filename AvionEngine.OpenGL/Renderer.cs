@@ -11,8 +11,9 @@ namespace AvionEngine.D3D12
     {
         public IWindow Window { get; }
         public Color ClearColor { get; set; } = Color.Black;
-        public List<IShader> Shaders { get; set; } = new List<IShader>();
+        public IEnumerable<IShader> Shaders { get => shaders; }
 
+        private List<IShader> shaders = new List<IShader>();
         private GL glInstance;
 
         public Renderer(IWindow window)
@@ -23,18 +24,23 @@ namespace AvionEngine.D3D12
 
         public void AddShader(BaseShader baseShader)
         {
-            Shaders.Add(new OpenGL.Rendering.Shader(glInstance, baseShader));
+            shaders.Add(new OpenGL.Rendering.Shader(glInstance, baseShader));
         }
 
         public bool RemoveShader(BaseShader baseShader)
         {
-            var shader = Shaders.Find(x => x.BaseShader == baseShader);
+            var shader = shaders.Find(x => x.BaseShader == baseShader);
             if (shader != null)
             {
-                Shaders.Remove(shader);
+                shaders.Remove(shader);
                 return true;
             }
             return false;
+        }
+
+        public void ClearShaders()
+        {
+            shaders.Clear();
         }
 
         public void Clear()

@@ -9,13 +9,15 @@ namespace AvionEngine.Interfaces
     {
         IWindow Window { get; }
 
-        Color ClearColor { get; set; }
+        IEnumerable<IShader> Shaders { get; }
 
-        List<IShader> Shaders { get; set; }
+        Color ClearColor { get; set; }
 
         void AddShader(BaseShader shader);
 
-        void RemoveShader(BaseShader shader);
+        bool RemoveShader(BaseShader shader);
+
+        void ClearShaders();
 
         void Clear();
     }

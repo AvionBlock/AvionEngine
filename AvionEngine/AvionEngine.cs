@@ -2,7 +2,6 @@
 using AvionEngine.Rendering;
 using AvionEngine.Structures;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace AvionEngine
@@ -48,6 +47,10 @@ namespace AvionEngine
             Renderer.Window.Update += Update;
             Renderer.Window.Render += Render;
 
+            foreach(var shader in shaders)
+            {
+                Renderer.AddShader(shader);
+            }
             //NOT FINISHED!
         }
 

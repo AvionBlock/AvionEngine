@@ -1,9 +1,12 @@
-﻿using Silk.NET.Maths;
+﻿using AvionEngine.Rendering;
+using Silk.NET.Maths;
 
 namespace AvionEngine.Interfaces
 {
     public interface IShader : IRenderable
     {
+        BaseShader BaseShader { get; }
+
         void Reload(string vertexCode, string fragmentCode);
 
         void SetBool(string name, bool value);

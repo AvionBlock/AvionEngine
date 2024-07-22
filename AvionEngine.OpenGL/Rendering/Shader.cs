@@ -1,4 +1,5 @@
 ﻿using AvionEngine.Interfaces;
+using AvionEngine.Rendering;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using System;
@@ -7,13 +8,18 @@ namespace AvionEngine.OpenGL.Rendering
 {
     public class Shader : IShader
     {
+        public BaseShader BaseShader { get; }
+
         private GL glInstance;
         private uint id;
 
-        public Shader(GL glInstance, string vertexCode, string fragmentCode)
+        public Shader(GL glInstance, BaseShader baseShader)
         {
             this.glInstance = glInstance;
-            Load(vertexCode, fragmentCode);
+            BaseShader = baseShader;
+
+            BaseShader.Load(this, out var vertex, out var fragment);
+            Load(vertex, fragment);
         }
 
         public void Render()

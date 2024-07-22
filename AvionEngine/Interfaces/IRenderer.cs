@@ -1,15 +1,21 @@
-﻿using Silk.NET.Windowing;
+﻿using AvionEngine.Rendering;
+using Silk.NET.Windowing;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace AvionEngine.Interfaces
 {
     public interface IRenderer
     {
-        Color ClearColor { get; set; }
-
         IWindow Window { get; }
 
-        IShader CreateShader(string vertexCode, string fragmentCode);
+        Color ClearColor { get; set; }
+
+        List<IShader> Shaders { get; set; }
+
+        void AddShader(BaseShader shader);
+
+        void RemoveShader(BaseShader shader);
 
         void Clear();
     }

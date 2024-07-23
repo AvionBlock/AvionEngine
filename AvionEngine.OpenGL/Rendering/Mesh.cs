@@ -3,22 +3,23 @@ using AvionEngine.Structures;
 using Silk.NET.OpenGL;
 using System.Runtime.InteropServices;
 using System;
+using AvionEngine.Rendering;
 
 namespace AvionEngine.OpenGL.Rendering
 {
     public class Mesh : IMesh
     {
-        public uint[] Indices { get; private set; }
-
         private GL glInstance;
         private uint VBO;
         private uint VAO;
         private uint EBO;
+        private uint indicesLength;
 
-        public unsafe Mesh(GL glInstance, Vertex[] vertices, uint[] indices)
+        public unsafe Mesh(GL glInstance, BaseMesh baseMesh)
         {
             this.glInstance = glInstance;
-            Indices = indices;
+
+            baseMesh.Load(this, out var vertices, out var indices);
 
             //Create Buffers and Arrays
             VAO = glInstance.GenVertexArray();
@@ -54,12 +55,14 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindVertexArray(0);
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
+
+            indicesLength = (uint)indices.Length;
         }
 
         public unsafe void Render(double delta)
         {
             glInstance.BindVertexArray(VAO);
-            glInstance.DrawElements(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, (void*)0);
+            glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
             glInstance.BindVertexArray(0);
         }
     }

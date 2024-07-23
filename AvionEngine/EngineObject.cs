@@ -8,6 +8,7 @@ namespace AvionEngine
     {
         public Transform<float, float, float> Transform { get; set; } = new Transform<float, float, float>();
         public IEngine Engine { get; set; }
+        public IEnumerable<Component> Components { get => components; }
 
         private List<Component> components = new List<Component>();
 

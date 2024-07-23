@@ -1,7 +1,5 @@
 ﻿using AvionEngine.Interfaces;
 using AvionEngine.Rendering;
-using AvionEngine.Structures;
-using System;
 using System.Collections.Generic;
 
 namespace AvionEngine
@@ -9,17 +7,15 @@ namespace AvionEngine
     public class AvionEngine : IEngine
     {
         public IRenderer Renderer { get; private set; } //We can swap out rendering engines.
-
         public IEnumerable<BaseShader> Shaders { get => shaders; }
-        public IEnumerable<Type> ComponentSystems { get => componentSystems; }
+        public IScene Scene { get; set; } //Changeable scenes.
 
-        public List<EngineObject> EngineObjects { get; set; } = new List<EngineObject>();
         public List<BaseShader> shaders { get; set; } = new List<BaseShader>();
-        public List<Type> componentSystems { get; set; } = new List<Type>();
 
-        public AvionEngine(IRenderer renderer)
+        public AvionEngine(IRenderer renderer, IScene scene)
         {
             Renderer = renderer; //Set the renderer the user wants first.
+            Scene = scene;
 
             renderer.Window.Update += Update;
             renderer.Window.Render += Render;
@@ -56,26 +52,22 @@ namespace AvionEngine
         private void Update(double delta)
         {
             Renderer.Clear();
-            foreach (var type in ComponentSystems)
+            for (int i = 0; i < Scene.EngineObjects.Count; i++)
             {
-                var methodInfo = type.GetMethod(nameof(BaseSystem<Component>.Update));
-
-                if (methodInfo != null && methodInfo.IsStatic)
+                foreach (var component in Scene.EngineObjects[i].Components)
                 {
-                    methodInfo.Invoke(null, new object[] { delta });
+                    component.Update(delta);
                 }
             }
         }
 
         private void Render(double delta)
         {
-            foreach (var type in ComponentSystems)
+            for (int i = 0; i < Scene.EngineObjects.Count; i++)
             {
-                var methodInfo = type.GetMethod(nameof(BaseSystem<Component>.Render));
-
-                if (methodInfo != null && methodInfo.IsStatic)
+                foreach (var component in Scene.EngineObjects[i].Components)
                 {
-                    methodInfo.Invoke(null, new object[] { delta });
+                    component.Render(delta);
                 }
             }
         }

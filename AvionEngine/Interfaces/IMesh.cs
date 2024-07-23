@@ -2,6 +2,6 @@
 {
     public interface IMesh : IRenderable
     {
-        //TODO
+        uint[] Indices { get; }
     }
 }

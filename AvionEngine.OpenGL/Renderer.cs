@@ -2,16 +2,23 @@
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using System.Drawing;
-using AvionEngine.Rendering;
-using System.Collections.Generic;
 
-namespace AvionEngine.D3D12
+namespace AvionEngine.OpenGL
 {
     public class Renderer : IRenderer
     {
         public IWindow Window { get; }
-        public Color ClearColor { get; set; } = Color.Black;
+        public Color ClearColor 
+        { 
+            get => clearColor;
+            set
+            {
+                glInstance.ClearColor(value);
+                clearColor = value;
+            }
+        }
         private GL glInstance;
+        private Color clearColor = Color.Black;
 
         public Renderer(IWindow window)
         {
@@ -19,9 +26,14 @@ namespace AvionEngine.D3D12
             glInstance = window.CreateOpenGL();
         }
 
-        public IShader CreateShader(BaseShader baseShader)
+        public IShader CreateShader(string vertex, string fragment)
         {
-            return new OpenGL.Rendering.Shader(glInstance, baseShader);
+            return new Rendering.Shader(glInstance, vertex, fragment);
+        }
+
+        public IMesh CreateMesh()
+        {
+            return new Rendering.Mesh(glInstance);
         }
 
         public void Clear()

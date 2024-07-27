@@ -2,18 +2,18 @@
 
 namespace AvionEngine.Rendering
 {
-    public abstract class BaseMaterial : IRenderable
+    public abstract class BaseMaterial : IVisual
     {
-        private IRenderable Renderable { get; set; }
+        private IVisual Visual { get; set; }
 
-        public BaseMaterial(IRenderable renderable)
+        public BaseMaterial(IVisual visual)
         {
-            Renderable = renderable;
+            Visual = visual;
         }
 
         public virtual void Render(double delta)
         {
-            Renderable.Render(delta);
+            Visual.Render(delta);
         }
     }
 }

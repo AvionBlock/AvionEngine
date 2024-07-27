@@ -3,8 +3,10 @@ using System;
 
 namespace AvionEngine.Interfaces
 {
-    public interface IShader : IRenderable, IDisposable
+    public interface IShader : IVisual, IDisposable
     {
+        bool IsDisposed { get; }
+
         void Reload(string vertexCode, string fragmentCode);
 
         void SetBool(string name, bool value);

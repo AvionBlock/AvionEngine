@@ -1,4 +1,5 @@
-﻿using AvionEngine.Rendering;
+﻿using Arch.Core;
+using AvionEngine.Rendering;
 
 namespace AvionEngine.Interfaces
 {
@@ -6,8 +7,6 @@ namespace AvionEngine.Interfaces
     {
         IRenderer Renderer { get; }
 
-        void AddShader(BaseShader baseShader);
-
-        void RemoveShader(BaseShader baseShader);
+        World World { get; }
     }
 }

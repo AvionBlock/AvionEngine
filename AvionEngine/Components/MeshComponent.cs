@@ -1,27 +1,21 @@
 ﻿using AvionEngine.Interfaces;
+using AvionEngine.Rendering;
 using AvionEngine.Structures;
 using System.Collections.Generic;
 
 namespace AvionEngine.Components
 {
-    public class MeshComponent : Component
+    public struct MeshComponent : IRenderable
     {
-        public uint[] Indices { get; set; }
+        public BaseMesh Mesh { get; set; }
         public List<IRenderable> Materials { get; set; }
-        //Create Mesh Here.
-
-        public MeshComponent()
-        {
-            Indices = new uint[0];
-            Materials = new List<IRenderable>();
-        }
 
         public void Set(Vertex[] vertices, uint[] indices)
         {
-            //Set mesh here.
+            Mesh.Set(vertices, indices);
         }
 
-        public override void Render(double delta)
+        public void Render(double delta)
         {
             foreach (var m in Materials)
             {

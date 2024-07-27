@@ -1,5 +1,4 @@
 ﻿using AvionEngine.Interfaces;
-using AvionEngine.Rendering;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using System;
@@ -12,11 +11,11 @@ namespace AvionEngine.OpenGL.Rendering
         private uint id;
         private bool disposed;
 
-        public Shader(GL glInstance, BaseShader baseShader)
+        public bool IsDisposed { get => disposed; }
+
+        public Shader(GL glInstance, string vertex, string fragment)
         {
             this.glInstance = glInstance;
-
-            baseShader.Load(this, out var vertex, out var fragment);
             Load(vertex, fragment);
         }
 

@@ -5,9 +5,11 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvionEngine", "AvionEngine\AvionEngine.csproj", "{8217437D-ABCB-423E-A82D-F38FBE98BDFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvionEngine.OpenGL", "AvionEngine.OpenGL\AvionEngine.OpenGL.csproj", "{F2B971B1-0591-4A1B-A779-98C394D47F9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvionEngine.OpenGL", "AvionEngine.OpenGL\AvionEngine.OpenGL.csproj", "{F2B971B1-0591-4A1B-A779-98C394D47F9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvionEngine.D3D12", "AvionEngine.D3D12\AvionEngine.D3D12.csproj", "{F403FDE2-D53D-40EC-BFC5-069C309C27B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvionEngine.D3D12", "AvionEngine.D3D12\AvionEngine.D3D12.csproj", "{F403FDE2-D53D-40EC-BFC5-069C309C27B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{ABCB075D-8A20-4D8A-8814-18D6F62A5D54}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{F403FDE2-D53D-40EC-BFC5-069C309C27B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F403FDE2-D53D-40EC-BFC5-069C309C27B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F403FDE2-D53D-40EC-BFC5-069C309C27B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABCB075D-8A20-4D8A-8814-18D6F62A5D54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABCB075D-8A20-4D8A-8814-18D6F62A5D54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABCB075D-8A20-4D8A-8814-18D6F62A5D54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABCB075D-8A20-4D8A-8814-18D6F62A5D54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,6 @@ using AvionEngine.Structures;
 using Silk.NET.OpenGL;
 using System.Runtime.InteropServices;
 using System;
-using AvionEngine.Rendering;
 
 namespace AvionEngine.OpenGL.Rendering
 {
@@ -14,12 +13,16 @@ namespace AvionEngine.OpenGL.Rendering
         private uint VAO;
         private uint EBO;
         private uint indicesLength;
+        private bool disposed;
 
-        public unsafe Mesh(GL glInstance, BaseMesh baseMesh)
+        public bool IsDisposed { get => disposed; }
+
+        public unsafe Mesh(GL glInstance)
         {
-            this.glInstance = glInstance;
+            if (disposed)
+                throw new ObjectDisposedException(nameof(Mesh));
 
-            baseMesh.Load(this, out var vertices, out var indices);
+            this.glInstance = glInstance;
 
             //Create Buffers and Arrays
             VAO = glInstance.GenVertexArray();
@@ -35,11 +38,13 @@ namespace AvionEngine.OpenGL.Rendering
 
             glInstance.EnableVertexAttribArray(2);
             glInstance.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, (uint)sizeof(Vertex), (void*)Marshal.OffsetOf<Vertex>(nameof(Vertex.TexPosition)));
-            Set(vertices, indices);
         }
 
         public unsafe void Set(Vertex[] vertices, uint[] indices)
         {
+            if (disposed)
+                throw new ObjectDisposedException(nameof(Mesh));
+
             glInstance.BindVertexArray(VAO);
 
             //Load data
@@ -61,9 +66,37 @@ namespace AvionEngine.OpenGL.Rendering
 
         public unsafe void Render(double delta)
         {
+            if (disposed)
+                throw new ObjectDisposedException(nameof(Mesh));
+
             glInstance.BindVertexArray(VAO);
             glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
             glInstance.BindVertexArray(0);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed) return;
+
+            if (disposing)
+            {
+                glInstance.DeleteVertexArray(VAO);
+                glInstance.DeleteBuffer(VBO);
+                glInstance.DeleteBuffer(EBO);
+            }
+
+            disposed = true;
+        }
+
+        ~Mesh()
+        {
+            Dispose(false);
         }
     }
 }

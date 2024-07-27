@@ -10,7 +10,9 @@ namespace AvionEngine.Interfaces
 
         Color ClearColor { get; set; }
 
-        IShader CreateShader(BaseShader shader);
+        IShader CreateShader(string vertex, string fragment);
+
+        IMesh CreateMesh();
 
         void Clear();
     }

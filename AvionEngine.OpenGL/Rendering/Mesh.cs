@@ -1,8 +1,9 @@
 ﻿using AvionEngine.Interfaces;
-using AvionEngine.Structures;
 using Silk.NET.OpenGL;
 using System.Runtime.InteropServices;
 using System;
+using System.Reflection;
+using AvionEngine.Structures;
 
 namespace AvionEngine.OpenGL.Rendering
 {
@@ -28,30 +29,35 @@ namespace AvionEngine.OpenGL.Rendering
             VAO = glInstance.GenVertexArray();
             VBO = glInstance.GenBuffer();
             EBO = glInstance.GenBuffer();
-
-            glInstance.BindVertexArray(VAO);
-            glInstance.EnableVertexAttribArray(0);
-            glInstance.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, (uint)sizeof(Vertex), (void*)0);
-
-            glInstance.EnableVertexAttribArray(1);
-            glInstance.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, (uint)sizeof(Vertex), (void*)Marshal.OffsetOf<Vertex>(nameof(Vertex.Normal)));
-
-            glInstance.EnableVertexAttribArray(2);
-            glInstance.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, (uint)sizeof(Vertex), (void*)Marshal.OffsetOf<Vertex>(nameof(Vertex.TexPosition)));
         }
 
-        public unsafe void Set(Vertex[] vertices, uint[] indices)
+        public unsafe void Set<T>(T[] vertices, uint[] indices) where T : unmanaged
         {
             if (disposed)
                 throw new ObjectDisposedException(nameof(Mesh));
 
             glInstance.BindVertexArray(VAO);
+            var verticeFields = typeof(T).GetFields();
+
+            for (uint i = 0; i < verticeFields.Length; i++)
+            {
+                var fieldSize = verticeFields[i].FieldType.GetFields().Length;
+                if (fieldSize <= 0)
+                    fieldSize = 1;
+
+                glInstance.EnableVertexAttribArray(i);
+                glInstance.VertexAttribPointer(
+                    i, 
+                    fieldSize,
+                    GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexFieldType>().FieldType), false,
+                    (uint)Marshal.SizeOf(verticeFields[i].FieldType),
+                    (void*)Marshal.OffsetOf(typeof(T),verticeFields[i].Name));
+            }
 
             //Load data
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
-            var vertexes = vertices.AsSpan();
-            fixed (float* verticesPtr = MemoryMarshal.Cast<Vertex, float>(vertexes))
-                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(Vertex)), verticesPtr, BufferUsageARB.StaticDraw);
+            fixed (void* verticesPtr = vertices)
+                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * Marshal.SizeOf<T>()), verticesPtr, BufferUsageARB.StaticDraw);
 
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
             fixed (uint* indicesPtr = indices)
@@ -97,6 +103,36 @@ namespace AvionEngine.OpenGL.Rendering
         ~Mesh()
         {
             Dispose(false);
+        }
+
+        private static VertexAttribPointerType GetVertexAttribPointerType(Type type)
+        {
+            switch(Type.GetTypeCode(type))
+            {
+                case TypeCode.SByte:
+                    return VertexAttribPointerType.Byte;
+                case TypeCode.Byte:
+                    return VertexAttribPointerType.UnsignedByte;
+                case TypeCode.Int16:
+                    return VertexAttribPointerType.Short;
+                case TypeCode.UInt16:
+                    return VertexAttribPointerType.UnsignedShort;
+                case TypeCode.Int32:
+                    return VertexAttribPointerType.Int;
+                case TypeCode.UInt32:
+                    return VertexAttribPointerType.UnsignedInt;
+                case TypeCode.Double:
+                    return VertexAttribPointerType.Double;
+
+                    //I have no idea wtf these are.
+                case TypeCode.Int64:
+                    return VertexAttribPointerType.Int64Arb;
+                case TypeCode.UInt64:
+                    return VertexAttribPointerType.UnsignedInt64Arb;
+
+                default:
+                    return VertexAttribPointerType.Float;
+            }
         }
     }
 }

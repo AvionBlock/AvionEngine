@@ -133,7 +133,15 @@ namespace AvionEngine.OpenGL.Rendering
             //Compile Fragment Shader
             var fragment = glInstance.CreateShader(ShaderType.FragmentShader);
             glInstance.ShaderSource(fragment, fragmentCode);
-            Compile(glInstance, fragment);
+            try
+            {
+                Compile(glInstance, fragment);
+            }
+            catch (Exception ex)
+            {
+                glInstance.DeleteShader(vertex); //Cleanup
+                throw ex;
+            }
 
             id = glInstance.CreateProgram(); //Create the shader itself.
 

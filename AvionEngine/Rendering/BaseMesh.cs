@@ -1,5 +1,4 @@
 ﻿using AvionEngine.Interfaces;
-using AvionEngine.Structures;
 
 namespace AvionEngine.Rendering
 {
@@ -22,7 +21,7 @@ namespace AvionEngine.Rendering
             this.nativeMesh = nativeMesh;
         }
 
-        public virtual void Set(Vertex[] vertices, uint[] indices)
+        public virtual void Set<T>(T[] vertices, uint[] indices) where T : unmanaged
         {
             NativeMesh.Set(vertices, indices);
         }

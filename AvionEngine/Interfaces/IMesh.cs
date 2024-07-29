@@ -7,6 +7,6 @@ namespace AvionEngine.Interfaces
     {
         bool IsDisposed { get; }
 
-        void Set(Vertex[] vertices, uint[] indices);
+        void Set<T>(T[] vertices, uint[] indices) where T : unmanaged;
     }
 }

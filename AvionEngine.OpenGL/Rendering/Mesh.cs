@@ -39,21 +39,6 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindVertexArray(VAO);
             var verticeFields = typeof(T).GetFields();
 
-            for (uint i = 0; i < verticeFields.Length; i++)
-            {
-                var fieldSize = verticeFields[i].FieldType.GetFields().Length;
-                if (fieldSize <= 0)
-                    fieldSize = 1;
-
-                glInstance.EnableVertexAttribArray(i);
-                glInstance.VertexAttribPointer(
-                    i, 
-                    fieldSize,
-                    GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexFieldType>().FieldType), false,
-                    (uint)Marshal.SizeOf(verticeFields[i].FieldType),
-                    (void*)Marshal.OffsetOf<T>(verticeFields[i].Name));
-            }
-
             //Load data
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
             fixed (void* verticesPtr = vertices)
@@ -62,6 +47,21 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
             fixed (uint* indicesPtr = indices)
                 glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, BufferUsageARB.StaticDraw);
+
+            for (uint i = 0; i < verticeFields.Length; i++)
+            {
+                var fieldSize = verticeFields[i].FieldType.GetFields().Length;
+                if (fieldSize <= 0)
+                    fieldSize = 1;
+
+                glInstance.EnableVertexAttribArray(i);
+                glInstance.VertexAttribPointer(
+                    i,
+                    fieldSize,
+                    GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexFieldType>().FieldType), false,
+                    (uint)Marshal.SizeOf(verticeFields[i].FieldType),
+                    (void*)Marshal.OffsetOf<T>(verticeFields[i].Name));
+            }
 
             glInstance.BindVertexArray(0);
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);

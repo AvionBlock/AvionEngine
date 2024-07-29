@@ -1,4 +1,4 @@
-﻿using AvionEngine.Rendering;
+﻿using Silk.NET.Maths;
 using Silk.NET.Windowing;
 using System.Drawing;
 
@@ -13,6 +13,8 @@ namespace AvionEngine.Interfaces
         IShader CreateShader(string vertex, string fragment);
 
         IMesh CreateMesh();
+
+        void Resize(Vector2D<int> newSize);
 
         void Clear();
     }

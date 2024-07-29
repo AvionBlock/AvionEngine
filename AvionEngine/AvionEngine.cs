@@ -13,6 +13,7 @@ namespace AvionEngine
             Renderer = renderer; //Set the renderer the user wants first.
             World = World.Create();
 
+            renderer.Window.Resize += Resize;
             renderer.Window.Update += Update;
         }
 
@@ -24,6 +25,11 @@ namespace AvionEngine
 
             Renderer.Window.Update += Update;
             //NOT FINISHED!
+        }
+
+        private void Resize(Silk.NET.Maths.Vector2D<int> newSize)
+        {
+            Renderer.Resize(newSize);
         }
 
         private void Update(double delta)

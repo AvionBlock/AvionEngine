@@ -2,6 +2,7 @@
 using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using System.Drawing;
+using Silk.NET.Maths;
 
 namespace AvionEngine.OpenGL
 {
@@ -34,6 +35,11 @@ namespace AvionEngine.OpenGL
         public IMesh CreateMesh()
         {
             return new Rendering.Mesh(glInstance);
+        }
+
+        public void Resize(Vector2D<int> newSize)
+        {
+            glInstance.Viewport(newSize);
         }
 
         public void Clear()

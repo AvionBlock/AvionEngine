@@ -58,7 +58,7 @@ void OnLoad()
     renderer.ClearColor = Color.Aqua;
     engine = new AvionEngine.AvionEngine(renderer);
     var mesh = engine.Renderer.CreateMesh();
-    mesh.Set([new Vertex(-0.5f, 0, 0), new Vertex(0.5f, 0, 0), new Vertex(0, 0.5f, 0)], [0,1,2]);
+    mesh.Set([new Vertex(-0.5f, 0, 0), new Vertex(0.5f, 0, 0), new Vertex(0, -0.1f, 0)], [0,1,2]);
 
     engine.World.Create(new TransformComponent<float, float, float>(), new CameraComponent() { ProjectionShader = new ProjectionShader(renderer, projVert, projFrag)});
     engine.World.Create(new MeshComponent() { Mesh = new BaseMesh(mesh)});

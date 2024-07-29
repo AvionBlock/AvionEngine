@@ -3,7 +3,7 @@ using System;
 
 namespace AvionEngine.Rendering
 {
-    public class BaseShader : IRenderable
+    public class BaseShader : IVisual
     {
         private IShader nativeShader;
         public virtual IShader NativeShader

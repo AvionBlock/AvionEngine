@@ -1,6 +1,5 @@
 ﻿using AvionEngine.Interfaces;
 using AvionEngine.Rendering;
-using System;
 using System.Collections.Generic;
 
 namespace AvionEngine.Components
@@ -8,7 +7,7 @@ namespace AvionEngine.Components
     public struct MeshComponent
     {
         public BaseMesh Mesh { get; set; }
-        public List<IRenderable> Materials { get; set; }
+        public List<IVisual> Materials { get; set; }
 
         public void Set<T>(T[] vertices, uint[] indices) where T : unmanaged
         {

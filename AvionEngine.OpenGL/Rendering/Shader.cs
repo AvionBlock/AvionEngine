@@ -140,6 +140,7 @@ namespace AvionEngine.OpenGL.Rendering
             catch (Exception ex)
             {
                 glInstance.DeleteShader(vertex); //Cleanup
+                glInstance.DeleteShader(fragment);
                 throw ex;
             }
 

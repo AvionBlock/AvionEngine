@@ -1,5 +1,4 @@
-﻿using AvionEngine.Structures;
-using System;
+﻿using System;
 
 namespace AvionEngine.Interfaces
 {

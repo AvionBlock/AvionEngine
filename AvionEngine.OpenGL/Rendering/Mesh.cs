@@ -51,13 +51,13 @@ namespace AvionEngine.OpenGL.Rendering
                     fieldSize,
                     GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexFieldType>().FieldType), false,
                     (uint)Marshal.SizeOf(verticeFields[i].FieldType),
-                    (void*)Marshal.OffsetOf(typeof(T),verticeFields[i].Name));
+                    (void*)Marshal.OffsetOf<T>(verticeFields[i].Name));
             }
 
             //Load data
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
             fixed (void* verticesPtr = vertices)
-                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * Marshal.SizeOf<T>()), verticesPtr, BufferUsageARB.StaticDraw);
+                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(T)), verticesPtr, BufferUsageARB.StaticDraw);
 
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
             fixed (uint* indicesPtr = indices)
@@ -107,7 +107,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         private static VertexAttribPointerType GetVertexAttribPointerType(Type type)
         {
-            switch(Type.GetTypeCode(type))
+            switch (Type.GetTypeCode(type))
             {
                 case TypeCode.SByte:
                     return VertexAttribPointerType.Byte;

@@ -55,11 +55,6 @@ namespace AvionEngine.OpenGL.Rendering
                 if (fieldSize <= 0)
                     fieldSize = 1;
 
-                Console.WriteLine($"Index: {i}");
-                Console.WriteLine($"Size: {fieldSize}");
-                Console.WriteLine($"Type: {GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexFieldType>().FieldType)}");
-                Console.WriteLine($"SizeOf: {(uint)Marshal.SizeOf(verticeFields[i].FieldType) * sizeof(T)}");
-                Console.WriteLine($"Offset: {Marshal.OffsetOf<T>(verticeFields[i].Name).ToInt32()}\n");
                 glInstance.EnableVertexAttribArray(i);
                 glInstance.VertexAttribPointer(
                     i,

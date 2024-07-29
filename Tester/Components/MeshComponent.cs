@@ -1,8 +1,7 @@
 ﻿using AvionEngine.Interfaces;
 using AvionEngine.Rendering;
-using System.Collections.Generic;
 
-namespace AvionEngine.Components
+namespace Tester.Components
 {
     public struct MeshComponent
     {

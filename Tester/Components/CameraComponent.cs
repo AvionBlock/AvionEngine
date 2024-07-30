@@ -1,10 +1,11 @@
 ﻿using Arch.Core;
 using AvionEngine.Rendering;
 using Silk.NET.Maths;
+using System.Numerics;
 
 namespace Tester.Components
 {
-    public struct CameraComponent
+    public class CameraComponent
     {
         public BaseShader ProjectionShader;
         public Vector2D<int> AspectSize;
@@ -16,11 +17,12 @@ namespace Tester.Components
         private float CameraYaw;
         private float CameraPitch;
         private float CameraZoom;
+        private Vector2 LastMousePosition;
 
         public CameraComponent(BaseShader projectionShader)
         {
             ProjectionShader = projectionShader;
-            CameraPosition = new Vector3D<float>(0.0f, 0.0f, 2.0f);
+            CameraPosition = new Vector3D<float>(0.0f, 0.0f, 1.0f);
             CameraFront = new Vector3D<float>(0.0f, 0.0f, -1.0f);
             CameraUp = Vector3D<float>.UnitY;
             CameraDirection = Vector3D<float>.Zero;
@@ -31,11 +33,6 @@ namespace Tester.Components
 
         public void Render(double delta, World world)
         {
-            CameraDirection.X = MathF.Cos(CameraPitch * (MathF.PI / 180)) * MathF.Cos(CameraYaw * (MathF.PI / 180));
-            CameraDirection.Y = MathF.Sin(CameraPitch * (MathF.PI / 180));
-            CameraDirection.Z = MathF.Cos(CameraPitch * (MathF.PI / 180)) * MathF.Sin(CameraYaw * (MathF.PI / 180));
-            CameraFront = Vector3D.Normalize(CameraDirection);
-
             var projectionShader = ProjectionShader;
             var query = new QueryDescription()
                 .WithAll<MeshComponent, TransformComponent<float>>();
@@ -52,6 +49,37 @@ namespace Tester.Components
                 projectionShader.NativeShader.SetUniform4("projection", projection);
                 mesh.Render(delta);
             });
+        }
+
+        public void UpdateLook(Vector2 position)
+        {
+            var lookSensitivity = 0.1f;
+            if (LastMousePosition == default)
+            {
+                LastMousePosition = position;
+            }
+            else
+            {
+                var xOffset = (position.X - LastMousePosition.X) * lookSensitivity;
+                var yOffset = (position.Y - LastMousePosition.Y) * lookSensitivity;
+                LastMousePosition = position;
+
+                CameraYaw += xOffset;
+                CameraPitch -= yOffset;
+
+                //We don't want to be able to look behind us by going over our head or under our feet so make sure it stays within these bounds
+                CameraPitch = Math.Clamp(CameraPitch, -89.0f, 89.0f);
+
+                CameraDirection.X = MathF.Cos(CameraPitch * (MathF.PI / 180)) * MathF.Cos(CameraYaw * (MathF.PI / 180));
+                CameraDirection.Y = MathF.Sin(CameraPitch * (MathF.PI / 180));
+                CameraDirection.Z = MathF.Cos(CameraPitch * (MathF.PI / 180)) * MathF.Sin(CameraYaw * (MathF.PI / 180));
+                CameraFront = Vector3D.Normalize(CameraDirection);
+            }
+        }
+
+        public void UpdatePosition(Vector3 vector)
+        {
+            CameraPosition.Z += vector.Z;
         }
     }
 }

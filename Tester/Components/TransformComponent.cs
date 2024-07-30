@@ -12,9 +12,9 @@ namespace Tester.Components
         {
             Position = Vector3D<T>.Zero;
             Rotation = Quaternion<T>.Identity;
-            Scale = Vector3D<T>.Zero;
+            Scale = Vector3D<T>.One;
         }
 
-        public Matrix4X4<T> Model => Matrix4X4<T>.Identity * Matrix4X4.CreateScale(Scale) * Matrix4X4.CreateFromQuaternion(Rotation) * Matrix4X4.CreateTranslation(Position);
+        public Matrix4X4<T> Model => Matrix4X4.CreateScale(Scale) * Matrix4X4.CreateFromQuaternion(Rotation) * Matrix4X4.CreateTranslation(Position);
     }
 }

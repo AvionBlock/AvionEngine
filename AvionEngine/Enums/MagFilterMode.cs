@@ -2,5 +2,7 @@
 {
     public enum MagFilterMode
     {
+        Linear,
+        Nearest
     }
 }

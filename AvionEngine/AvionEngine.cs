@@ -34,6 +34,11 @@ namespace AvionEngine
             return new BaseShader(Renderer.CreateShader(vertex, fragment));
         }
 
+        public BaseTexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormat format = TextureFormat.RGB)
+        {
+            return new BaseTexture(Renderer.CreateTexture2D(width, height, data, format));
+        }
+
         public BaseMesh<TVertex> CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
         {
             return new BaseMesh<TVertex>(Renderer.CreateMesh(vertices, indices, drawMode));

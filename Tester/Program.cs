@@ -48,7 +48,7 @@ void OnLoad()
             0,1,2,
         ]);
 
-    var camera = new CameraComponent(new ProjectionShader(renderer, projVert, projFrag)) { AspectSize = window.Size };
+    var camera = new CameraComponent(engine.CreateShader(projVert, projFrag)) { AspectSize = window.Size };
     engine.World.Create(new TransformComponent<float>(), camera);
     engine.World.Create(new TransformComponent<float>() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent<Vertex>(mesh));
 

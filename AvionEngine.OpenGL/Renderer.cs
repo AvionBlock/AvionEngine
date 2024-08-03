@@ -33,6 +33,11 @@ namespace AvionEngine.OpenGL
             return new Rendering.Shader(glInstance, vertex, fragment);
         }
 
+        public ITexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormat format = TextureFormat.RGB)
+        {
+            return new Rendering.Texture2D(glInstance, width, height, data, format);
+        }
+
         public IMesh<TVertex> CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
         {
             return new Rendering.Mesh<TVertex>(glInstance, vertices, indices, drawMode);

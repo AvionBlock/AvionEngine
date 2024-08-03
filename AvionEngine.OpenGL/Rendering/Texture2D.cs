@@ -11,12 +11,14 @@ namespace AvionEngine.OpenGL.Rendering
         private GL glInstance;
         private uint texture;
 
-        public unsafe Texture2D(GL glInstance)
+        public unsafe Texture2D(GL glInstance, uint width, uint height, byte[] data, TextureFormat format = TextureFormat.RGB)
         {
             this.glInstance = glInstance;
 
             fixed (uint* texturePtr = &texture)
                 glInstance.GenTextures(1, texturePtr);
+
+            Set(width, height, data, format);
         }
 
         public void Assign()

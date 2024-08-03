@@ -12,11 +12,6 @@ namespace AvionEngine.Rendering
             set => nativeShader = value;
         } //We can swap out native shaders if we need to. Give the option to the user to set or ignore setting the NativeShader.
 
-        public BaseShader(IRenderer renderer, string vertex, string fragment)
-        {
-            nativeShader = renderer.CreateShader(vertex, fragment);
-        }
-
         public BaseShader(IShader nativeShader)
         {
             this.nativeShader = nativeShader;

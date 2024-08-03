@@ -12,11 +12,6 @@ namespace AvionEngine.Rendering
             set => nativeMesh = value;
         } //We can swap out native mesh if we need to. Give the option to the user to set or ignore setting the NativeMesh.
 
-        public BaseMesh(IRenderer renderer, TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static)
-        {
-            nativeMesh = renderer.CreateMesh<TVertex>(vertices, indices, drawMode);
-        }
-
         public BaseMesh(IMesh<TVertex> nativeMesh)
         {
             this.nativeMesh = nativeMesh;

@@ -1,5 +1,4 @@
 ﻿using Silk.NET.Maths;
-using System.Numerics;
 
 namespace Tester.Components
 {

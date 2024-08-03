@@ -1,14 +1,13 @@
 ﻿using Arch.Core;
 using AvionEngine.OpenGL;
-using AvionEngine.Rendering;
 using Silk.NET.Windowing;
 using System.Drawing;
-using Tester;
 using Tester.Structures;
 using Tester.Components;
 using Silk.NET.Maths;
 using Silk.NET.Input;
 using System.Numerics;
+using Arch.Core.Extensions;
 
 string projFrag = @"#version 330 core
 out vec4 out_color;
@@ -48,9 +47,8 @@ void OnLoad()
             0,1,2,
         ]);
 
-    var camera = new CameraComponent(engine.CreateShader(projVert, projFrag)) { AspectSize = window.Size };
-    engine.World.Create(new TransformComponent<float>(), camera);
-    engine.World.Create(new TransformComponent<float>() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent<Vertex>(mesh));
+    var camera = engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0,0,1)}, new CameraComponent(engine.CreateShader(projVert, projFrag)) { AspectSize = window.Size });
+    engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent<Vertex>(mesh));
 
     IInputContext input = window.CreateInput();
     primaryKeyboard = input.Keyboards.FirstOrDefault();
@@ -64,13 +62,7 @@ void OnLoad()
 
     void OnRender(double delta)
     {
-        var query = new QueryDescription()
-            .WithAny<CameraComponent>();
-
-        engine.World.Query(in query, (ref CameraComponent camera) =>
-        {
-            camera.Render(delta, engine.World);
-        });
+        camera.Get<CameraComponent>().Render(delta, engine.World, ref camera.Get<TransformComponent>());
     }
 
     void OnMouseMove(IMouse mouse, Vector2 position)
@@ -81,6 +73,6 @@ void OnLoad()
         [
             0,1,2,
         ]);
-        camera.UpdateLook(position);
+        camera.Get<CameraComponent>().UpdateLook(position, ref camera.Get<TransformComponent>());
     }
 }

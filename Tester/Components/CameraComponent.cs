@@ -2,6 +2,7 @@
 using AvionEngine.Rendering;
 using Silk.NET.Maths;
 using System.Numerics;
+using Tester.Structures;
 
 namespace Tester.Components
 {
@@ -35,13 +36,13 @@ namespace Tester.Components
         {
             var projectionShader = ProjectionShader;
             var query = new QueryDescription()
-                .WithAll<MeshComponent, TransformComponent<float>>();
+                .WithAll<MeshComponent<Vertex>, TransformComponent<float>>();
 
             var view = Matrix4X4.CreateLookAt(CameraPosition, CameraPosition + CameraFront, CameraUp);
             //Note that the apsect ratio calculation must be performed as a float, otherwise integer division will be performed (truncating the result).
             var projection = Matrix4X4.CreatePerspectiveFieldOfView(CameraZoom * MathF.PI / 180f, AspectSize.X / (float)AspectSize.Y, 0.1f, 100.0f);
 
-            world.Query(in query, (ref MeshComponent mesh, ref TransformComponent<float> transform) =>
+            world.Query(in query, (ref MeshComponent<Vertex> mesh, ref TransformComponent<float> transform) =>
             {
                 projectionShader.Render(delta);
                 projectionShader.NativeShader.SetUniform4("model", transform.Model);

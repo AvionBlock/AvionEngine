@@ -3,14 +3,15 @@ using AvionEngine.Rendering;
 
 namespace Tester.Components
 {
-    public struct MeshComponent
+    public struct MeshComponent<TVertex> where TVertex : unmanaged
     {
-        public BaseMesh Mesh { get; set; }
+        public BaseMesh<TVertex> Mesh { get; set; }
         public List<IVisual> Materials { get; set; }
 
-        public void Set<T>(T[] vertices, uint[] indices) where T : unmanaged
+        public MeshComponent(BaseMesh<TVertex> mesh)
         {
-            Mesh.Set(vertices, indices);
+            Mesh = mesh;
+            Materials = new List<IVisual>();
         }
 
         public void Render(double delta)

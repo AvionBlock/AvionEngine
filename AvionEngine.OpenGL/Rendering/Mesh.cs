@@ -4,10 +4,11 @@ using System.Runtime.InteropServices;
 using System;
 using System.Reflection;
 using AvionEngine.Structures;
+using AvionEngine.Enums;
 
 namespace AvionEngine.OpenGL.Rendering
 {
-    public class Mesh : IMesh
+    public class Mesh<TVertex> : IMesh<TVertex> where TVertex : unmanaged
     {
         private GL glInstance;
         private uint VBO;
@@ -18,10 +19,10 @@ namespace AvionEngine.OpenGL.Rendering
 
         public bool IsDisposed { get => disposed; }
 
-        public unsafe Mesh(GL glInstance)
+        public unsafe Mesh(GL glInstance, TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static)
         {
             if (disposed)
-                throw new ObjectDisposedException(nameof(Mesh));
+                throw new ObjectDisposedException(nameof(Mesh<TVertex>));
 
             this.glInstance = glInstance;
 
@@ -29,24 +30,18 @@ namespace AvionEngine.OpenGL.Rendering
             VAO = glInstance.GenVertexArray();
             VBO = glInstance.GenBuffer();
             EBO = glInstance.GenBuffer();
-        }
-
-        public unsafe void Set<T>(T[] vertices, uint[] indices) where T : unmanaged
-        {
-            if (disposed)
-                throw new ObjectDisposedException(nameof(Mesh));
 
             glInstance.BindVertexArray(VAO);
-            var verticeFields = typeof(T).GetFields();
+            var verticeFields = typeof(TVertex).GetFields();
 
             //Load data
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
             fixed (void* verticesPtr = vertices)
-                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(T)), verticesPtr, BufferUsageARB.StaticDraw);
+                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(TVertex)), verticesPtr, GetBufferUsageARB(drawMode));
 
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
             fixed (uint* indicesPtr = indices)
-                glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, BufferUsageARB.StaticDraw);
+                glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, GetBufferUsageARB(drawMode));
 
             for (uint i = 0; i < verticeFields.Length; i++)
             {
@@ -60,21 +55,42 @@ namespace AvionEngine.OpenGL.Rendering
                     fieldSize,
                     GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexFieldType>().FieldType),
                     false,
-                    (uint)sizeof(T),
-                    (void*)Marshal.OffsetOf<T>(verticeFields[i].Name));
+                    (uint)sizeof(TVertex),
+                    (void*)Marshal.OffsetOf<TVertex>(verticeFields[i].Name));
             }
 
             glInstance.BindVertexArray(0);
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
+            indicesLength = (uint)indices.Length;
+        }
 
+        public unsafe void Set(TVertex[] vertices, uint[] indices, int offset = 0)
+        {
+            if (disposed)
+                throw new ObjectDisposedException(nameof(Mesh<TVertex>));
+
+            glInstance.BindVertexArray(VAO);
+
+            //Load data
+            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
+            fixed (void* verticesPtr = vertices)
+                glInstance.BufferSubData(BufferTargetARB.ArrayBuffer, offset, (UIntPtr)(vertices.Length * sizeof(TVertex)), verticesPtr);
+
+            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
+            fixed (uint* indicesPtr = indices)
+                glInstance.BufferSubData(BufferTargetARB.ElementArrayBuffer, offset, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr);
+
+            glInstance.BindVertexArray(0);
+            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
             indicesLength = (uint)indices.Length;
         }
 
         public unsafe void Render(double delta)
         {
             if (disposed)
-                throw new ObjectDisposedException(nameof(Mesh));
+                throw new ObjectDisposedException(nameof(Mesh<TVertex>));
 
             glInstance.BindVertexArray(VAO);
             glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
@@ -133,6 +149,18 @@ namespace AvionEngine.OpenGL.Rendering
 
                 default:
                     return VertexAttribPointerType.Float;
+            }
+        }
+
+        private static BufferUsageARB GetBufferUsageARB(DrawMode mode) {
+            switch(mode)
+            {
+                case DrawMode.Dynamic:
+                    return BufferUsageARB.DynamicDraw;
+                case DrawMode.Stream:
+                    return BufferUsageARB.StreamDraw;
+                default:
+                    return BufferUsageARB.StaticDraw;
             }
         }
     }

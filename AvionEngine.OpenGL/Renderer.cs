@@ -3,6 +3,7 @@ using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using System.Drawing;
 using Silk.NET.Maths;
+using AvionEngine.Enums;
 
 namespace AvionEngine.OpenGL
 {
@@ -32,9 +33,9 @@ namespace AvionEngine.OpenGL
             return new Rendering.Shader(glInstance, vertex, fragment);
         }
 
-        public IMesh CreateMesh()
+        public IMesh<TVertex> CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
         {
-            return new Rendering.Mesh(glInstance);
+            return new Rendering.Mesh<TVertex>(glInstance, vertices, indices, drawMode);
         }
 
         public void Resize(Vector2D<int> newSize)

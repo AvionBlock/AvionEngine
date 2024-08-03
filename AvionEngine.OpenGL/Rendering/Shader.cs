@@ -125,16 +125,17 @@ namespace AvionEngine.OpenGL.Rendering
 
         private void Load(string vertexCode, string fragmentCode)
         {
-            //Compile Vertex Shader
+            //Create Vertex Shader
             var vertex = glInstance.CreateShader(ShaderType.VertexShader);
             glInstance.ShaderSource(vertex, vertexCode);
-            Compile(glInstance, vertex); //Compile
 
-            //Compile Fragment Shader
+            //Create Fragment Shader
             var fragment = glInstance.CreateShader(ShaderType.FragmentShader);
             glInstance.ShaderSource(fragment, fragmentCode);
             try
             {
+                //Compile and cleanup on error before rethrowing.
+                Compile(glInstance, vertex);
                 Compile(glInstance, fragment);
             }
             catch (Exception ex)

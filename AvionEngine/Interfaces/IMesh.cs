@@ -2,10 +2,10 @@
 
 namespace AvionEngine.Interfaces
 {
-    public interface IMesh : IRenderable, IDisposable
+    public interface IMesh<TVertex> : IRenderable, IDisposable where TVertex : unmanaged
     {
         bool IsDisposed { get; }
 
-        void Set<T>(T[] vertices, uint[] indices) where T : unmanaged;
+        void Set(TVertex[] vertices, uint[] indices, int offset = 0);
     }
 }

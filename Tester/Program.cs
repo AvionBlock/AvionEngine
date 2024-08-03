@@ -41,20 +41,16 @@ void OnLoad()
     var renderer = new Renderer(window);
     renderer.ClearColor = Color.Aqua;
     engine = new AvionEngine.AvionEngine(renderer);
-    var mesh = engine.Renderer.CreateMesh();
-    mesh.Set([
-        new Vertex(-0.5f, -0.5f, 0), new Vertex(0.5f, -0.5f, 0), new Vertex(0.5f, 0.5f, 0), new Vertex(-0.5f, 0.5f, 0),
-        new Vertex(-0.5f, -0.5f, -0.5f), new Vertex(0.5f, -0.5f, -0.5f), new Vertex(0.5f, 0.5f, -0.5f), new Vertex(-0.5f, 0.5f, -0.5f)],
+    var mesh = engine.CreateMesh([
+        new Vertex(-0.5f, -0.5f, 0), new Vertex(0.5f, -0.5f, 0), new Vertex(0.5f, 0.5f, 0)
+        ],
         [
             0,1,2,
-            2,3,0,
-            4,5,6,
-            6,7,4,
         ]);
 
     var camera = new CameraComponent(new ProjectionShader(renderer, projVert, projFrag)) { AspectSize = window.Size };
     engine.World.Create(new TransformComponent<float>(), camera);
-    engine.World.Create(new TransformComponent<float>() { Position = new Vector3D<float>(1f, 0, 0), Rotation = Quaternion<float>.CreateFromAxisAngle(new Vector3D<float>(0,0,1),90f * (MathF.PI / 180f))}, new MeshComponent() { Mesh = new BaseMesh(mesh) });
+    engine.World.Create(new TransformComponent<float>() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent<Vertex>(mesh));
 
     IInputContext input = window.CreateInput();
     primaryKeyboard = input.Keyboards.FirstOrDefault();
@@ -79,6 +75,12 @@ void OnLoad()
 
     void OnMouseMove(IMouse mouse, Vector2 position)
     {
+        mesh.Set([
+        new Vertex(-0.5f, -1f, 0), new Vertex(0.5f, -0.5f, 0), new Vertex(0.5f, 1f, 0)
+        ],
+        [
+            0,1,2,
+        ]);
         camera.UpdateLook(position);
     }
 }

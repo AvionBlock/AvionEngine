@@ -1,5 +1,7 @@
 ﻿using Arch.Core;
+using AvionEngine.Enums;
 using AvionEngine.Interfaces;
+using AvionEngine.Rendering;
 
 namespace AvionEngine
 {
@@ -25,6 +27,16 @@ namespace AvionEngine
 
             Renderer.Window.Update += Update;
             //NOT FINISHED!
+        }
+
+        public BaseShader CreateShader(string vertex, string fragment)
+        {
+            return new BaseShader(Renderer.CreateShader(vertex, fragment));
+        }
+
+        public BaseMesh<TVertex> CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
+        {
+            return new BaseMesh<TVertex>(Renderer.CreateMesh(vertices, indices, drawMode));
         }
 
         private void Resize(Silk.NET.Maths.Vector2D<int> newSize)

@@ -2,7 +2,6 @@
 using AvionEngine.Rendering;
 using Silk.NET.Maths;
 using System.Numerics;
-using Tester.Structures;
 
 namespace Tester.Components
 {

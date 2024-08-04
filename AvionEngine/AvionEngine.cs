@@ -39,9 +39,9 @@ namespace AvionEngine
             return new BaseTexture(Renderer.CreateTexture2D(width, height, data, format));
         }
 
-        public BaseMesh<TVertex> CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
+        public BaseMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
         {
-            return new BaseMesh<TVertex>(Renderer.CreateMesh(vertices, indices, drawMode));
+            return new BaseMesh(Renderer.CreateMesh(vertices, indices, drawMode));
         }
 
         private void Resize(Silk.NET.Maths.Vector2D<int> newSize)

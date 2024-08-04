@@ -1,23 +1,22 @@
-﻿using AvionEngine.Enums;
-using AvionEngine.Interfaces;
+﻿using AvionEngine.Interfaces;
 
 namespace AvionEngine.Rendering
 {
-    public class BaseMesh<TVertex> : IRenderable where TVertex : unmanaged
+    public class BaseMesh : IRenderable
     {
-        private IMesh<TVertex> nativeMesh;
-        public virtual IMesh<TVertex> NativeMesh
+        private IMesh nativeMesh;
+        public virtual IMesh NativeMesh
         { 
             get => nativeMesh;
             set => nativeMesh = value;
         } //We can swap out native mesh if we need to. Give the option to the user to set or ignore setting the NativeMesh.
 
-        public BaseMesh(IMesh<TVertex> nativeMesh)
+        public BaseMesh(IMesh nativeMesh)
         {
             this.nativeMesh = nativeMesh;
         }
 
-        public virtual void Set(TVertex[] vertices, uint[] indices)
+        public virtual void Set<TVertex>(TVertex[] vertices, uint[] indices) where TVertex : unmanaged
         {
             NativeMesh.Set(vertices, indices);
         }

@@ -10,7 +10,7 @@ namespace AvionEngine.Interfaces
 
         BaseShader CreateShader(string vertex, string fragment);
 
-        BaseMesh<TVertex> CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged;
+        BaseMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged;
 
         World World { get; }
     }

@@ -30,14 +30,14 @@ namespace Tester.Components
         {
             var projectionShader = ProjectionShader;
             var query = new QueryDescription()
-                .WithAll<MeshComponent<Vertex>, TransformComponent>();
+                .WithAll<MeshComponent, TransformComponent>();
 
             var front = Vector3D.Normalize(transform.EulerAngles);
             var view = Matrix4X4.CreateLookAt(transform.Position, transform.Position + front, CameraUp);
             //Note that the apsect ratio calculation must be performed as a float, otherwise integer division will be performed (truncating the result).
             var projection = Matrix4X4.CreatePerspectiveFieldOfView(CameraZoom * MathF.PI / 180f, AspectSize.X / (float)AspectSize.Y, 0.1f, 100.0f);
 
-            world.Query(in query, (ref MeshComponent<Vertex> mesh, ref TransformComponent transform) =>
+            world.Query(in query, (ref MeshComponent mesh, ref TransformComponent transform) =>
             {
                 projectionShader.Render(delta);
                 projectionShader.NativeShader.SetUniform4("model", transform.Model);

@@ -8,7 +8,7 @@ using AvionEngine.Enums;
 
 namespace AvionEngine.OpenGL.Rendering
 {
-    public class Mesh<TVertex> : IMesh<TVertex> where TVertex : unmanaged
+    public class Mesh<TVertex> : IMesh where TVertex : unmanaged
     {
         private GL glInstance;
         private uint VBO;
@@ -65,6 +65,17 @@ namespace AvionEngine.OpenGL.Rendering
             indicesLength = (uint)indices.Length;
         }
 
+        public void Set<TVert>(TVert[] vertices, uint[] indices, int offset = 0) where TVert : unmanaged
+        {
+            if (vertices is TVertex[] verts)
+            {
+                Set(verts, indices, offset);
+                return;
+            }
+
+            throw new ArgumentException("Vertice type is not valid for this mesh!", nameof(TVert));
+        }
+
         public unsafe void Set(TVertex[] vertices, uint[] indices, int offset = 0)
         {
             if (disposed)
@@ -85,6 +96,11 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
             indicesLength = (uint)indices.Length;
+        }
+
+        public Type GetVertexType()
+        {
+            return typeof(TVertex);
         }
 
         public unsafe void Render(double delta)

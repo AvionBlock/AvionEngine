@@ -48,7 +48,7 @@ void OnLoad()
         ]);
 
     var camera = engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0,0,1)}, new CameraComponent(engine.CreateShader(projVert, projFrag)) { AspectSize = window.Size });
-    engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent<Vertex>(mesh));
+    engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent(mesh));
 
     IInputContext input = window.CreateInput();
     primaryKeyboard = input.Keyboards.FirstOrDefault();

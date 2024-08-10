@@ -64,6 +64,8 @@ namespace AvionEngine.OpenGL.Rendering
                         */
                 }
             }
+            glInstance.GenerateMipmap(GetTextureTarget(targetMode));
+            glInstance.BindTexture(GetTextureTarget(targetMode), 0); //Unbind Texture.
         }
 
         public void UpdateWrapMode(WrapMode? wrapModeS = null, WrapMode? wrapModeT = null, WrapMode? wrapModeR = null)
@@ -89,6 +91,12 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.TextureParameter(texture, TextureParameterName.TextureMagFilter, (int)GetTextureMagFilter(this.magFilterMode));
 
             glInstance.BindTexture(GetTextureTarget(targetMode), 0); //Unbind the texture.
+        }
+
+        public void Render(int unit = 0)
+        {
+            glInstance.ActiveTexture(TextureUnit.Texture0 + unit);
+            glInstance.BindTexture(GetTextureTarget(targetMode), texture);
         }
 
         private static TextureWrapMode GetTextureWrap(WrapMode mode)

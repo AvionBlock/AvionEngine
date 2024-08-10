@@ -7,7 +7,7 @@ namespace AvionEngine.Interfaces
     {
         bool IsDisposed { get; }
 
-        void Reload(string vertexCode, string fragmentCode);
+        void Update(string vertexCode, string fragmentCode);
 
         void SetBool(string name, bool value);
 

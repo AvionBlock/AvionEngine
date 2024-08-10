@@ -1,14 +1,15 @@
-﻿using AvionEngine.Structures;
+﻿using AvionEngine.Enums;
+using AvionEngine.Structures;
 using System.Numerics;
 namespace Tester.Structures
 {
     public struct Vertex
     {
-        [VertexFieldType(typeof(float))]
+        [VertexField(FieldType.Single)]
         public Vector3 Position;
-        [VertexFieldType(typeof(float))]
+        [VertexField(FieldType.Single)]
         public Vector3 Normal;
-        [VertexFieldType(typeof(float))]
+        [VertexField(FieldType.Single)]
         public Vector2 TexLoc;
 
         public Vertex(float x, float y, float z)

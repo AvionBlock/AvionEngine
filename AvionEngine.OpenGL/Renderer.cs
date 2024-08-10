@@ -35,12 +35,14 @@ namespace AvionEngine.OpenGL
 
         public ITexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormat format = TextureFormat.RGB)
         {
-            return new Rendering.Texture2D(glInstance, width, height, data, format);
+            return new Rendering.Texture(glInstance, width, height, data, format);
         }
 
         public IMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
         {
-            return new Rendering.Mesh<TVertex>(glInstance, vertices, indices, drawMode);
+            var mesh = new Rendering.Mesh(glInstance, drawMode);
+            mesh.Update(vertices, indices);
+            return mesh;
         }
 
         public void Resize(Vector2D<int> newSize)

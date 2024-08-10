@@ -67,8 +67,9 @@ void OnLoad()
 
     void OnMouseMove(IMouse mouse, Vector2 position)
     {
-        mesh.Set([
-        new Vertex(-0.5f, -1f, 0), new Vertex(0.5f, -0.5f, 0), new Vertex(0.5f, 1f, 0)
+        mesh.Update([
+        new Vertex(-0.5f, -1f, 1), new Vertex(0.5f, -0.5f, 0), new Vertex(0.5f, 1f, 0),
+                new Vertex(-0.5f, -1f, 1), new Vertex(0.5f, -0.5f, 0), new Vertex(0.5f, 1f, 0)
         ],
         [
             0,1,2,

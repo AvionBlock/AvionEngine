@@ -5,10 +5,11 @@ using System;
 using System.Reflection;
 using AvionEngine.Structures;
 using AvionEngine.Enums;
+using System.Linq;
 
 namespace AvionEngine.OpenGL.Rendering
 {
-    public class Mesh<TVertex> : IMesh where TVertex : unmanaged
+    public class Mesh : IMesh
     {
         private GL glInstance;
         private uint VBO;
@@ -16,23 +17,32 @@ namespace AvionEngine.OpenGL.Rendering
         private uint EBO;
         private uint indicesLength;
         private bool disposed;
+        private DrawMode drawMode;
+        private Type? vertexType;
 
         public bool IsDisposed { get => disposed; }
+        public DrawMode DrawMode { get => drawMode; set => drawMode = value; }
 
-        public unsafe Mesh(GL glInstance, TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static)
+        public unsafe Mesh(GL glInstance, DrawMode drawMode = DrawMode.Static)
         {
             if (disposed)
-                throw new ObjectDisposedException(nameof(Mesh<TVertex>));
+                throw new ObjectDisposedException(nameof(Mesh));
 
             this.glInstance = glInstance;
+            this.drawMode = drawMode;
 
             //Create Buffers and Arrays
             VAO = glInstance.GenVertexArray();
             VBO = glInstance.GenBuffer();
             EBO = glInstance.GenBuffer();
+        }
+
+        public unsafe void Update<TVertex>(TVertex[] vertices, uint[] indices) where TVertex : unmanaged
+        {
+            if (disposed)
+                throw new ObjectDisposedException(nameof(Mesh));
 
             glInstance.BindVertexArray(VAO);
-            var verticeFields = typeof(TVertex).GetFields();
 
             //Load data
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
@@ -42,6 +52,19 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
             fixed (uint* indicesPtr = indices)
                 glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, GetBufferUsageARB(drawMode));
+
+            if(!typeof(TVertex).Equals(vertexType))
+                UpdateVertexType<TVertex>();
+
+            glInstance.BindVertexArray(0);
+            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
+            indicesLength = (uint)indices.Length;
+        }
+
+        public unsafe void UpdateVertexType<TVertex>() where TVertex : unmanaged
+        {
+            var verticeFields = typeof(TVertex).GetFields().Where(x => Attribute.IsDefined(x, typeof(VertexField))).ToArray();
 
             for (uint i = 0; i < verticeFields.Length; i++)
             {
@@ -53,60 +76,19 @@ namespace AvionEngine.OpenGL.Rendering
                 glInstance.VertexAttribPointer(
                     i,
                     fieldSize,
-                    GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexFieldType>().FieldType),
+                    GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexField>().FieldType),
                     false,
                     (uint)sizeof(TVertex),
                     (void*)Marshal.OffsetOf<TVertex>(verticeFields[i].Name));
             }
 
-            glInstance.BindVertexArray(0);
-            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
-            indicesLength = (uint)indices.Length;
-        }
-
-        public void Set<TVert>(TVert[] vertices, uint[] indices, int offset = 0) where TVert : unmanaged
-        {
-            if (vertices is TVertex[] verts)
-            {
-                Set(verts, indices, offset);
-                return;
-            }
-
-            throw new ArgumentException("Vertice type is not valid for this mesh!", nameof(TVert));
-        }
-
-        public unsafe void Set(TVertex[] vertices, uint[] indices, int offset = 0)
-        {
-            if (disposed)
-                throw new ObjectDisposedException(nameof(Mesh<TVertex>));
-
-            glInstance.BindVertexArray(VAO);
-
-            //Load data
-            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
-            fixed (void* verticesPtr = vertices)
-                glInstance.BufferSubData(BufferTargetARB.ArrayBuffer, offset, (UIntPtr)(vertices.Length * sizeof(TVertex)), verticesPtr);
-
-            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
-            fixed (uint* indicesPtr = indices)
-                glInstance.BufferSubData(BufferTargetARB.ElementArrayBuffer, offset, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr);
-
-            glInstance.BindVertexArray(0);
-            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
-            indicesLength = (uint)indices.Length;
-        }
-
-        public Type GetVertexType()
-        {
-            return typeof(TVertex);
+            vertexType = typeof(TVertex);
         }
 
         public unsafe void Render(double delta)
         {
             if (disposed)
-                throw new ObjectDisposedException(nameof(Mesh<TVertex>));
+                throw new ObjectDisposedException(nameof(Mesh));
 
             glInstance.BindVertexArray(VAO);
             glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
@@ -138,45 +120,46 @@ namespace AvionEngine.OpenGL.Rendering
             Dispose(false);
         }
 
-        private static VertexAttribPointerType GetVertexAttribPointerType(Type type)
+        private static VertexAttribPointerType GetVertexAttribPointerType(FieldType fieldType)
         {
-            switch (Type.GetTypeCode(type))
+            switch (fieldType)
             {
-                case TypeCode.SByte:
+                case FieldType.SByte:
                     return VertexAttribPointerType.Byte;
-                case TypeCode.Byte:
+                case FieldType.Byte:
                     return VertexAttribPointerType.UnsignedByte;
-                case TypeCode.Int16:
+                case FieldType.Int16:
                     return VertexAttribPointerType.Short;
-                case TypeCode.UInt16:
+                case FieldType.UInt16:
                     return VertexAttribPointerType.UnsignedShort;
-                case TypeCode.Int32:
+                case FieldType.Int32:
                     return VertexAttribPointerType.Int;
-                case TypeCode.UInt32:
+                case FieldType.UInt32:
                     return VertexAttribPointerType.UnsignedInt;
-                case TypeCode.Double:
-                    return VertexAttribPointerType.Double;
-
-                    //I have no idea wtf these are.
-                case TypeCode.Int64:
+                case FieldType.Int64:
                     return VertexAttribPointerType.Int64Arb;
-                case TypeCode.UInt64:
+                case FieldType.UInt64:
                     return VertexAttribPointerType.UnsignedInt64Arb;
-
-                default:
+                case FieldType.Single:
                     return VertexAttribPointerType.Float;
+                case FieldType.Double:
+                    return VertexAttribPointerType.Double;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(fieldType));
             }
         }
 
-        private static BufferUsageARB GetBufferUsageARB(DrawMode mode) {
-            switch(mode)
+        private static BufferUsageARB GetBufferUsageARB(DrawMode drawMode) {
+            switch(drawMode)
             {
+                case DrawMode.Static:
+                    return BufferUsageARB.StaticDraw;
                 case DrawMode.Dynamic:
                     return BufferUsageARB.DynamicDraw;
                 case DrawMode.Stream:
                     return BufferUsageARB.StreamDraw;
                 default:
-                    return BufferUsageARB.StaticDraw;
+                    throw new ArgumentOutOfRangeException(nameof(drawMode));
             }
         }
     }

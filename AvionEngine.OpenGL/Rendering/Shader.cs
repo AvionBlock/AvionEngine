@@ -27,7 +27,7 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.UseProgram(id);
         }
 
-        public void Reload(string vertexCode, string fragmentCode)
+        public void Update(string vertexCode, string fragmentCode)
         {
             if (disposed)
                 throw new ObjectDisposedException(nameof(Shader));

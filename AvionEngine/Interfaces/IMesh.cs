@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AvionEngine.Enums;
+using System;
 
 namespace AvionEngine.Interfaces
 {
@@ -6,8 +7,8 @@ namespace AvionEngine.Interfaces
     {
         bool IsDisposed { get; }
 
-        void Set<TVert>(TVert[] vertices, uint[] indices, int offset = 0) where TVert : unmanaged;
+        DrawMode DrawMode { get; set; }
 
-        Type GetVertexType();
+        void Update<TVertex>(TVertex[] vertices, uint[] indices) where TVertex : unmanaged;
     }
 }

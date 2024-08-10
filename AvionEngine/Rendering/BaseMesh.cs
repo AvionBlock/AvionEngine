@@ -16,9 +16,9 @@ namespace AvionEngine.Rendering
             this.nativeMesh = nativeMesh;
         }
 
-        public virtual void Set<TVertex>(TVertex[] vertices, uint[] indices) where TVertex : unmanaged
+        public virtual void Update<TVertex>(TVertex[] vertices, uint[] indices) where TVertex : unmanaged
         {
-            NativeMesh.Set(vertices, indices);
+            NativeMesh.Update(vertices, indices);
         }
 
         public virtual void Render(double delta)

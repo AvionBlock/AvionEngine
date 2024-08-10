@@ -20,14 +20,14 @@ namespace AvionEngine.OpenGL.Rendering
             uint width,
             uint height,
             byte[] data,
+            uint depth = 0,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
             TextureFormatMode formatMode = TextureFormatMode.RGB,
             WrapMode wrapModeS = WrapMode.Repeat,
             WrapMode wrapModeT = WrapMode.Repeat,
             WrapMode wrapModeR = WrapMode.Repeat,
             MinFilterMode minFilterMode = MinFilterMode.Linear,
-            MagFilterMode magFilterMode = MagFilterMode.Linear,
-            uint depth = 0)
+            MagFilterMode magFilterMode = MagFilterMode.Linear)
         {
             this.glInstance = glInstance;
             this.targetMode = targetMode;

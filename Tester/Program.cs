@@ -1,5 +1,4 @@
-﻿using Arch.Core;
-using AvionEngine.OpenGL;
+﻿using AvionEngine.OpenGL;
 using Silk.NET.Windowing;
 using System.Drawing;
 using Tester.Structures;
@@ -40,12 +39,7 @@ void OnLoad()
     var renderer = new Renderer(window);
     renderer.ClearColor = Color.Aqua;
     engine = new AvionEngine.AvionEngine(renderer);
-    var mesh = engine.CreateMesh([
-        new Vertex(-0.5f, -0.5f, 0.5f), new Vertex(0.5f, -0.5f, 0), new Vertex(0.5f, 0.5f, 0)
-        ],
-        [
-            0,1,2,
-        ]);
+    var mesh = engine.CreateMesh<Vertex>([], []);
 
     var camera = engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0,0,1), Rotation = Quaternion<float>.CreateFromAxisAngle(Vector3D<float>.UnitX, -90 * (MathF.PI / 180)) }, new CameraComponent(engine.CreateShader(projVert, projFrag)) { AspectSize = window.Size });
     engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent(mesh));

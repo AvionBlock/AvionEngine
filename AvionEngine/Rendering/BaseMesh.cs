@@ -1,4 +1,5 @@
-﻿using AvionEngine.Interfaces;
+﻿using AvionEngine.Enums;
+using AvionEngine.Interfaces;
 
 namespace AvionEngine.Rendering
 {
@@ -16,9 +17,9 @@ namespace AvionEngine.Rendering
             this.nativeMesh = nativeMesh;
         }
 
-        public virtual void Update<TVertex>(TVertex[] vertices, uint[] indices) where TVertex : unmanaged
+        public virtual void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode? usageMode = null, DrawMode? drawMode = null) where TVertex : unmanaged
         {
-            NativeMesh.Update(vertices, indices);
+            NativeMesh.Update(vertices, indices, usageMode, drawMode);
         }
 
         public virtual void Render(double delta)

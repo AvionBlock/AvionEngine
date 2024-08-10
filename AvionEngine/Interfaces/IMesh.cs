@@ -7,6 +7,6 @@ namespace AvionEngine.Interfaces
     {
         bool IsDisposed { get; }
 
-        void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode drawMode = UsageMode.Static) where TVertex : unmanaged;
+        void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode? usageMode = null, DrawMode? drawMode = null) where TVertex : unmanaged;
     }
 }

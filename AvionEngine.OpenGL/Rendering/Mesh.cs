@@ -93,6 +93,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (disposed)
                 throw new ObjectDisposedException(nameof(Mesh));
 
+            Console.WriteLine(usageMode);
             glInstance.BindVertexArray(VAO);
             glInstance.DrawElements(GetPrimitiveType(drawMode), indicesLength, DrawElementsType.UnsignedInt, (void*)0);
             glInstance.BindVertexArray(0);
@@ -187,5 +188,6 @@ namespace AvionEngine.OpenGL.Rendering
                 default:
                     throw new ArgumentOutOfRangeException(nameof(drawMode));
             }
+        }
     }
 }

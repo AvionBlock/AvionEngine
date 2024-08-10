@@ -1,6 +1,6 @@
 ﻿namespace AvionEngine.Enums
 {
-    public enum TextureTarget
+    public enum TextureTargetMode
     {
         Texture1D,
         Texture2D,

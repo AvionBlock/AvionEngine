@@ -39,7 +39,7 @@ namespace AvionEngine
             return new BaseMesh(Renderer.CreateMesh(vertices, indices, usageMode, drawMode));
         }
 
-        public BaseTexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormat format = TextureFormat.RGB)
+        public BaseTexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormatMode format = TextureFormatMode.RGB)
         {
             return new BaseTexture(Renderer.CreateTexture2D(width, height, data, format));
         }

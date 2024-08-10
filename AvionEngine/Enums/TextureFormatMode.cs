@@ -1,6 +1,6 @@
 ﻿namespace AvionEngine.Enums
 {
-    public enum TextureFormat
+    public enum TextureFormatMode
     {
         RGB,
         RGBA

@@ -40,7 +40,7 @@ namespace AvionEngine.OpenGL
             return mesh;
         }
 
-        public ITexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormat format = TextureFormat.RGB)
+        public ITexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormatMode format = TextureFormatMode.RGB)
         {
             return new Rendering.Texture(glInstance, width, height, data, format);
         }

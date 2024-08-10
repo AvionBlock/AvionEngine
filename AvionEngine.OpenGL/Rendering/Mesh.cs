@@ -18,17 +18,18 @@ namespace AvionEngine.OpenGL.Rendering
         private uint indicesLength;
         private bool disposed;
         private DrawMode drawMode;
+        private UsageMode usageMode;
         private Type? vertexType;
 
         public bool IsDisposed { get => disposed; }
-        public DrawMode DrawMode { get => drawMode; set => drawMode = value; }
 
-        public unsafe Mesh(GL glInstance, DrawMode drawMode = DrawMode.Static)
+        public unsafe Mesh(GL glInstance, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles)
         {
             if (disposed)
                 throw new ObjectDisposedException(nameof(Mesh));
 
             this.glInstance = glInstance;
+            this.usageMode = usageMode;
             this.drawMode = drawMode;
 
             //Create Buffers and Arrays
@@ -37,21 +38,23 @@ namespace AvionEngine.OpenGL.Rendering
             EBO = glInstance.GenBuffer();
         }
 
-        public unsafe void Update<TVertex>(TVertex[] vertices, uint[] indices) where TVertex : unmanaged
+        public unsafe void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode? usageMode = null, DrawMode? drawMode = null) where TVertex : unmanaged
         {
             if (disposed)
                 throw new ObjectDisposedException(nameof(Mesh));
+            this.usageMode = usageMode ?? this.usageMode;
+            this.drawMode = drawMode ?? this.drawMode;
 
             glInstance.BindVertexArray(VAO);
 
             //Load data
             glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
             fixed (void* verticesPtr = vertices)
-                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(TVertex)), verticesPtr, GetBufferUsageARB(drawMode));
+                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(TVertex)), verticesPtr, GetBufferUsageARB(this.usageMode));
 
             glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
             fixed (uint* indicesPtr = indices)
-                glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, GetBufferUsageARB(drawMode));
+                glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, GetBufferUsageARB(this.usageMode));
 
             if(!typeof(TVertex).Equals(vertexType))
                 UpdateVertexType<TVertex>();
@@ -91,7 +94,7 @@ namespace AvionEngine.OpenGL.Rendering
                 throw new ObjectDisposedException(nameof(Mesh));
 
             glInstance.BindVertexArray(VAO);
-            glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
+            glInstance.DrawElements(GetPrimitiveType(drawMode), indicesLength, DrawElementsType.UnsignedInt, (void*)0);
             glInstance.BindVertexArray(0);
         }
 
@@ -149,18 +152,40 @@ namespace AvionEngine.OpenGL.Rendering
             }
         }
 
-        private static BufferUsageARB GetBufferUsageARB(DrawMode drawMode) {
-            switch(drawMode)
+        private static BufferUsageARB GetBufferUsageARB(UsageMode usageMode) {
+            switch(usageMode)
             {
-                case DrawMode.Static:
+                case UsageMode.Static:
                     return BufferUsageARB.StaticDraw;
-                case DrawMode.Dynamic:
+                case UsageMode.Dynamic:
                     return BufferUsageARB.DynamicDraw;
-                case DrawMode.Stream:
+                case UsageMode.Stream:
                     return BufferUsageARB.StreamDraw;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(usageMode));
+            }
+        }
+
+        private static PrimitiveType GetPrimitiveType(DrawMode drawMode)
+        {
+            switch (drawMode)
+            {
+                case DrawMode.Lines:
+                    return PrimitiveType.Lines;
+                case DrawMode.LineLoop:
+                    return PrimitiveType.LineLoop;
+                case DrawMode.LineStrip:
+                    return PrimitiveType.LineStrip;
+                case DrawMode.Triangles:
+                    return PrimitiveType.Triangles;
+                case DrawMode.TriangleStrip:
+                    return PrimitiveType.TriangleStrip;
+                case DrawMode.TriangleFan:
+                    return PrimitiveType.TriangleFan;
+                case DrawMode.Quads:
+                    return PrimitiveType.Quads;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(drawMode));
             }
-        }
     }
 }

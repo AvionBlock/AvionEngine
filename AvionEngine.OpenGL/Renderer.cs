@@ -33,7 +33,7 @@ namespace AvionEngine.OpenGL
             return new Rendering.Shader(glInstance, vertex, fragment);
         }
 
-        public IMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
+        public IMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode drawMode = UsageMode.Static) where TVertex : unmanaged
         {
             var mesh = new Rendering.Mesh(glInstance, drawMode);
             mesh.Update(vertices, indices);

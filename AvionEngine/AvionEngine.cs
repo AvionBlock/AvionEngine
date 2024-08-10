@@ -34,7 +34,7 @@ namespace AvionEngine
             return new BaseShader(Renderer.CreateShader(vertex, fragment));
         }
 
-        public BaseMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, DrawMode drawMode = DrawMode.Static) where TVertex : unmanaged
+        public BaseMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode drawMode = UsageMode.Static) where TVertex : unmanaged
         {
             return new BaseMesh(Renderer.CreateMesh(vertices, indices, drawMode));
         }

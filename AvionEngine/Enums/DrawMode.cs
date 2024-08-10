@@ -2,8 +2,12 @@
 {
     public enum DrawMode
     {
-        Static,
-        Dynamic,
-        Stream
+        Lines,
+        LineLoop,
+        LineStrip,
+        Triangles,
+        TriangleStrip,
+        TriangleFan,
+        Quads
     }
 }

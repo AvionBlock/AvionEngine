@@ -11,21 +11,20 @@ namespace AvionEngine.OpenGL.Rendering
 {
     public class Mesh : IMesh
     {
-        private GL glInstance;
-        private uint VBO;
-        private uint VAO;
-        private uint EBO;
+        private readonly GL glInstance;
+        private readonly uint VBO;
+        private readonly uint VAO;
+        private readonly uint EBO;
         private uint indicesLength;
-        private bool disposed;
         private DrawMode drawMode;
         private UsageMode usageMode;
         private Type? vertexType;
 
-        public bool IsDisposed { get => disposed; }
+        public bool IsDisposed { get; private set; }
 
-        public unsafe Mesh(GL glInstance, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles)
+        public Mesh(GL glInstance, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Mesh));
 
             this.glInstance = glInstance;
@@ -40,7 +39,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public unsafe void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode? usageMode = null, DrawMode? drawMode = null) where TVertex : unmanaged
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Mesh));
             this.usageMode = usageMode ?? this.usageMode;
             this.drawMode = drawMode ?? this.drawMode;
@@ -56,7 +55,7 @@ namespace AvionEngine.OpenGL.Rendering
             fixed (uint* indicesPtr = indices)
                 glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, GetBufferUsageARB(this.usageMode));
 
-            if(!typeof(TVertex).Equals(vertexType))
+            if(typeof(TVertex) != vertexType)
                 UpdateVertexType<TVertex>();
 
             glInstance.BindVertexArray(0);
@@ -67,11 +66,11 @@ namespace AvionEngine.OpenGL.Rendering
 
         public unsafe void UpdateVertexType<TVertex>() where TVertex : unmanaged
         {
-            var verticeFields = typeof(TVertex).GetFields().Where(x => Attribute.IsDefined(x, typeof(VertexField))).ToArray();
+            var verticesFields = typeof(TVertex).GetFields().Where(x => Attribute.IsDefined(x, typeof(VertexField))).ToArray();
 
-            for (uint i = 0; i < verticeFields.Length; i++)
+            for (uint i = 0; i < verticesFields.Length; i++)
             {
-                var fieldSize = verticeFields[i].FieldType.GetFields().Length;
+                var fieldSize = verticesFields[i].FieldType.GetFields().Length;
                 if (fieldSize <= 0)
                     fieldSize = 1;
 
@@ -79,10 +78,10 @@ namespace AvionEngine.OpenGL.Rendering
                 glInstance.VertexAttribPointer(
                     i,
                     fieldSize,
-                    GetVertexAttribPointerType(verticeFields[i].GetCustomAttribute<VertexField>().FieldType),
+                    GetVertexAttribPointerType(verticesFields[i].GetCustomAttribute<VertexField>().FieldType),
                     false,
                     (uint)sizeof(TVertex),
-                    (void*)Marshal.OffsetOf<TVertex>(verticeFields[i].Name));
+                    (void*)Marshal.OffsetOf<TVertex>(verticesFields[i].Name));
             }
 
             vertexType = typeof(TVertex);
@@ -90,7 +89,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public unsafe void Render(double delta)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Mesh));
 
             glInstance.BindVertexArray(VAO);
@@ -106,7 +105,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed) return;
+            if (IsDisposed) return;
 
             if (disposing)
             {
@@ -115,7 +114,7 @@ namespace AvionEngine.OpenGL.Rendering
                 glInstance.DeleteBuffer(EBO);
             }
 
-            disposed = true;
+            IsDisposed = true;
         }
 
         ~Mesh()
@@ -125,68 +124,46 @@ namespace AvionEngine.OpenGL.Rendering
 
         private static VertexAttribPointerType GetVertexAttribPointerType(FieldType fieldType)
         {
-            switch (fieldType)
+            return fieldType switch
             {
-                case FieldType.SByte:
-                    return VertexAttribPointerType.Byte;
-                case FieldType.Byte:
-                    return VertexAttribPointerType.UnsignedByte;
-                case FieldType.Int16:
-                    return VertexAttribPointerType.Short;
-                case FieldType.UInt16:
-                    return VertexAttribPointerType.UnsignedShort;
-                case FieldType.Int32:
-                    return VertexAttribPointerType.Int;
-                case FieldType.UInt32:
-                    return VertexAttribPointerType.UnsignedInt;
-                case FieldType.Int64:
-                    return VertexAttribPointerType.Int64Arb;
-                case FieldType.UInt64:
-                    return VertexAttribPointerType.UnsignedInt64Arb;
-                case FieldType.Single:
-                    return VertexAttribPointerType.Float;
-                case FieldType.Double:
-                    return VertexAttribPointerType.Double;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(fieldType));
-            }
+                FieldType.SByte => VertexAttribPointerType.Byte,
+                FieldType.Byte => VertexAttribPointerType.UnsignedByte,
+                FieldType.Int16 => VertexAttribPointerType.Short,
+                FieldType.UInt16 => VertexAttribPointerType.UnsignedShort,
+                FieldType.Int32 => VertexAttribPointerType.Int,
+                FieldType.UInt32 => VertexAttribPointerType.UnsignedInt,
+                FieldType.Int64 => VertexAttribPointerType.Int64Arb,
+                FieldType.UInt64 => VertexAttribPointerType.UnsignedInt64Arb,
+                FieldType.Single => VertexAttribPointerType.Float,
+                FieldType.Double => VertexAttribPointerType.Double,
+                _ => throw new ArgumentOutOfRangeException(nameof(fieldType))
+            };
         }
 
-        private static BufferUsageARB GetBufferUsageARB(UsageMode usageMode) {
-            switch(usageMode)
+        private static BufferUsageARB GetBufferUsageARB(UsageMode usageMode)
+        {
+            return usageMode switch
             {
-                case UsageMode.Static:
-                    return BufferUsageARB.StaticDraw;
-                case UsageMode.Dynamic:
-                    return BufferUsageARB.DynamicDraw;
-                case UsageMode.Stream:
-                    return BufferUsageARB.StreamDraw;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(usageMode));
-            }
+                UsageMode.Static => BufferUsageARB.StaticDraw,
+                UsageMode.Dynamic => BufferUsageARB.DynamicDraw,
+                UsageMode.Stream => BufferUsageARB.StreamDraw,
+                _ => throw new ArgumentOutOfRangeException(nameof(usageMode))
+            };
         }
 
         private static PrimitiveType GetPrimitiveType(DrawMode drawMode)
         {
-            switch (drawMode)
+            return drawMode switch
             {
-                case DrawMode.Lines:
-                    return PrimitiveType.Lines;
-                case DrawMode.LineLoop:
-                    return PrimitiveType.LineLoop;
-                case DrawMode.LineStrip:
-                    return PrimitiveType.LineStrip;
-                case DrawMode.Triangles:
-                    return PrimitiveType.Triangles;
-                case DrawMode.TriangleStrip:
-                    return PrimitiveType.TriangleStrip;
-                case DrawMode.TriangleFan:
-                    return PrimitiveType.TriangleFan;
-                case DrawMode.Quads:
-                    return PrimitiveType.Quads;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(drawMode));
-            }
+                DrawMode.Lines => PrimitiveType.Lines,
+                DrawMode.LineLoop => PrimitiveType.LineLoop,
+                DrawMode.LineStrip => PrimitiveType.LineStrip,
+                DrawMode.Triangles => PrimitiveType.Triangles,
+                DrawMode.TriangleStrip => PrimitiveType.TriangleStrip,
+                DrawMode.TriangleFan => PrimitiveType.TriangleFan,
+                DrawMode.Quads => PrimitiveType.Quads,
+                _ => throw new ArgumentOutOfRangeException(nameof(drawMode))
+            };
         }
     }
 }

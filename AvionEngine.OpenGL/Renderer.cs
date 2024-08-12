@@ -40,9 +40,20 @@ namespace AvionEngine.OpenGL
             return mesh;
         }
 
-        public ITexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormatMode format = TextureFormatMode.RGB)
+        public ITexture CreateTexture(
+            uint width, 
+            uint height, 
+            byte[] data, 
+            uint depth = 0, 
+            TextureTargetMode targetMode = TextureTargetMode.Texture2D, 
+            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            WrapMode wrapModeS = WrapMode.Repeat,
+            WrapMode wrapModeT = WrapMode.Repeat,
+            WrapMode wrapModeR = WrapMode.Repeat,
+            MinFilterMode minFilterMode = MinFilterMode.Linear,
+            MagFilterMode magFilterMode = MagFilterMode.Linear)
         {
-            return new Rendering.Texture(glInstance, width, height, data, format);
+            return new Rendering.Texture(glInstance, width, height, data, depth, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode);
         }
 
         public void Resize(Vector2D<int> newSize)

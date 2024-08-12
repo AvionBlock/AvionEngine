@@ -15,7 +15,18 @@ namespace AvionEngine.Interfaces
 
         IMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles) where TVertex : unmanaged;
 
-        ITexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormatMode format = TextureFormatMode.RGB);
+        ITexture CreateTexture(
+            uint width,
+            uint height,
+            byte[] data,
+            uint depth = 0,
+            TextureTargetMode targetMode = TextureTargetMode.Texture2D,
+            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            WrapMode wrapModeS = WrapMode.Repeat,
+            WrapMode wrapModeT = WrapMode.Repeat,
+            WrapMode wrapModeR = WrapMode.Repeat,
+            MinFilterMode minFilterMode = MinFilterMode.Linear,
+            MagFilterMode magFilterMode = MagFilterMode.Linear);
 
         void Resize(Vector2D<int> newSize);
 

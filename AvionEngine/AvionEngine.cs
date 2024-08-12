@@ -41,7 +41,7 @@ namespace AvionEngine
 
         public BaseTexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormatMode format = TextureFormatMode.RGB)
         {
-            return new BaseTexture(Renderer.CreateTexture2D(width, height, data, format));
+            return new BaseTexture(Renderer.CreateTexture(width, height, data));
         }
 
         private void Resize(Silk.NET.Maths.Vector2D<int> newSize)

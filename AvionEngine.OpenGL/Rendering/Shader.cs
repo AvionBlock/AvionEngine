@@ -7,11 +7,10 @@ namespace AvionEngine.OpenGL.Rendering
 {
     public class Shader : IShader
     {
-        private GL glInstance;
+        private readonly GL glInstance;
         private uint id;
-        private bool disposed;
 
-        public bool IsDisposed { get => disposed; }
+        public bool IsDisposed { get; private set; }
 
         public Shader(GL glInstance, string vertex, string fragment)
         {
@@ -21,7 +20,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public void Render(double delta)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.UseProgram(id);
@@ -29,7 +28,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public void Update(string vertexCode, string fragmentCode)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.DeleteProgram(id);
@@ -38,7 +37,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public void SetBool(string name, bool value)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.Uniform1(glInstance.GetUniformLocation(id, name), value ? 1 : 0);
@@ -46,7 +45,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public void SetInt(string name, int value)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.Uniform1(glInstance.GetUniformLocation(id, name), value);
@@ -54,7 +53,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public void SetUInt(string name, uint value)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.Uniform1(glInstance.GetUniformLocation(id, name), value);
@@ -62,7 +61,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public void SetFloat(string name, float value)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.Uniform1(glInstance.GetUniformLocation(id, name), value);
@@ -70,7 +69,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public unsafe void SetUniform2(string name, Matrix2X2<float> value)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.UniformMatrix2(glInstance.GetUniformLocation(id, name), 1, true, (float*)&value);
@@ -78,7 +77,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public unsafe void SetUniform3(string name, Matrix3X3<float> value)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.UniformMatrix3(glInstance.GetUniformLocation(id, name), 1, true, (float*)&value);
@@ -86,7 +85,7 @@ namespace AvionEngine.OpenGL.Rendering
 
         public unsafe void SetUniform4(string name, Matrix4X4<float> value)
         {
-            if (disposed)
+            if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
             glInstance.UniformMatrix4(glInstance.GetUniformLocation(id, name), 1, true, (float*)&value);
@@ -100,14 +99,14 @@ namespace AvionEngine.OpenGL.Rendering
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed) return;
+            if (IsDisposed) return;
 
             if(disposing)
             {
                 glInstance.DeleteProgram(id);
             }
 
-            disposed = true;
+            IsDisposed = true;
         }
 
         ~Shader()
@@ -118,9 +117,9 @@ namespace AvionEngine.OpenGL.Rendering
         public static void Compile(GL glInstance, uint shader)
         {
             glInstance.CompileShader(shader);
-            glInstance.GetShader(shader, ShaderParameterName.CompileStatus, out int status);
+            glInstance.GetShader(shader, ShaderParameterName.CompileStatus, out var status);
             if (status != (int)GLEnum.True)
-                new Exception("Shader failed to compile: " + glInstance.GetShaderInfoLog(shader));
+                throw new Exception("Shader failed to compile: " + glInstance.GetShaderInfoLog(shader));
         }
 
         private void Load(string vertexCode, string fragmentCode)
@@ -138,11 +137,11 @@ namespace AvionEngine.OpenGL.Rendering
                 Compile(glInstance, vertex);
                 Compile(glInstance, fragment);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 glInstance.DeleteShader(vertex); //Cleanup
                 glInstance.DeleteShader(fragment);
-                throw ex;
+                throw;
             }
 
             id = glInstance.CreateProgram(); //Create the shader itself.

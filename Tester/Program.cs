@@ -38,7 +38,7 @@ window.Run();
 void OnLoad()
 {
     var renderer = new Renderer(window);
-    renderer.ClearColor = Color.Aqua;
+    renderer.SetClearColor(Color.Aqua);
     engine = new AvionEngine.AvionEngine(renderer);
     var mesh = engine.CreateMesh<Vertex>([], [], AvionEngine.Enums.UsageMode.Stream);
 

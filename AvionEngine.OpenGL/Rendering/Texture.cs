@@ -16,6 +16,8 @@ namespace AvionEngine.OpenGL.Rendering
         private WrapMode wrapModeR;
         private MinFilterMode minFilterMode;
         private MagFilterMode magFilterMode;
+        
+        public bool IsDisposed { get; private set; }
 
         public Texture(GL glInstance,
             uint width,
@@ -77,9 +79,16 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindTexture(GetTextureTarget(this.targetMode), 0); //Unbind Texture.
         }
 
-        public unsafe void Update(uint[] width, uint[] height, uint[] depth, byte[][] data,
+        public unsafe void Update(uint[] width, uint[] height, byte[][] data,
             TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null)
         {
+            if(width.Length != 6)
+                throw new ArgumentOutOfRangeException(nameof(width), "Width must have 6 values.");
+            if(height.Length != 6)
+                throw new ArgumentOutOfRangeException(nameof(height), "Height must have 6 values.");
+            if(data.Length != 6)
+                throw new ArgumentOutOfRangeException(nameof(data), "Data must have 6 values.");
+            
             this.targetMode = targetMode ?? this.targetMode;
             this.formatMode = formatMode ?? this.formatMode;
 
@@ -140,10 +149,37 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindTexture(GetTextureTarget(targetMode), 0); //Unbind the texture.
         }
 
-        public void Render(int unit = 0)
+        public void Assign(int unit = 0)
         {
             glInstance.ActiveTexture(TextureUnit.Texture0 + unit);
+        }
+
+        public void Render(double delta)
+        {
             glInstance.BindTexture(GetTextureTarget(targetMode), texture);
+        }
+        
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (IsDisposed) return;
+
+            if(disposing)
+            {
+                glInstance.DeleteTexture(texture);
+            }
+
+            IsDisposed = true;
+        }
+
+        ~Texture()
+        {
+            Dispose(false);
         }
 
         private static TextureWrapMode GetTextureWrap(WrapMode wrapMode)

@@ -10,17 +10,7 @@ namespace AvionEngine.OpenGL
     public class Renderer : IRenderer
     {
         public IWindow Window { get; }
-        public Color ClearColor 
-        { 
-            get => clearColor;
-            set
-            {
-                glInstance.ClearColor(value);
-                clearColor = value;
-            }
-        }
-        private GL glInstance;
-        private Color clearColor = Color.Black;
+        private readonly GL glInstance;
 
         public Renderer(IWindow window)
         {
@@ -61,10 +51,14 @@ namespace AvionEngine.OpenGL
             glInstance.Viewport(newSize);
         }
 
+        public void SetClearColor(Color color)
+        {
+            glInstance.ClearColor(color);
+        }
+
         public void Clear()
         {
             glInstance.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
-        //glInstance.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, (void*)0);
     }
 }

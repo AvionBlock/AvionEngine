@@ -9,8 +9,6 @@ namespace AvionEngine.Interfaces
     {
         IWindow Window { get; }
 
-        Color ClearColor { get; set; }
-
         IShader CreateShader(string vertex, string fragment);
 
         IMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles) where TVertex : unmanaged;
@@ -29,6 +27,8 @@ namespace AvionEngine.Interfaces
             MagFilterMode magFilterMode = MagFilterMode.Linear);
 
         void Resize(Vector2D<int> newSize);
+        
+        void SetClearColor(Color color);
 
         void Clear();
     }

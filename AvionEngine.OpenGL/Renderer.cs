@@ -4,6 +4,7 @@ using Silk.NET.OpenGL;
 using System.Drawing;
 using Silk.NET.Maths;
 using AvionEngine.Enums;
+using AvionEngine.Structures;
 
 namespace AvionEngine.OpenGL
 {
@@ -31,10 +32,7 @@ namespace AvionEngine.OpenGL
         }
 
         public ITexture CreateTexture(
-            uint width, 
-            uint height, 
-            byte[] data, 
-            uint depth = 0, 
+            TextureInfo textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D, 
             TextureFormatMode formatMode = TextureFormatMode.RGB,
             WrapMode wrapModeS = WrapMode.Repeat,
@@ -43,7 +41,20 @@ namespace AvionEngine.OpenGL
             MinFilterMode minFilterMode = MinFilterMode.Linear,
             MagFilterMode magFilterMode = MagFilterMode.Linear)
         {
-            return new Rendering.Texture(glInstance, width, height, data, depth, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode);
+            return new Rendering.Texture(glInstance, textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode);
+        }
+
+        public ITexture CreateTexture(
+            TextureInfo[] textureData,
+            TextureTargetMode targetMode = TextureTargetMode.Texture2D,
+            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            WrapMode wrapModeS = WrapMode.Repeat,
+            WrapMode wrapModeT = WrapMode.Repeat,
+            WrapMode wrapModeR = WrapMode.Repeat,
+            MinFilterMode minFilterMode = MinFilterMode.Linear,
+            MagFilterMode magFilterMode = MagFilterMode.Linear)
+        {
+            return new Rendering.Texture(glInstance, textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode);
         }
 
         public void Resize(Vector2D<int> newSize)

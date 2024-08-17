@@ -16,9 +16,15 @@ namespace AvionEngine.Rendering
             this.nativeTexture = nativeTexture;
         }
 
+        public void Render(double delta, int unit)
+        {
+            nativeTexture.Assign(unit);
+            nativeTexture.Render(delta);
+        }
+
         public void Render(double delta)
         {
-            throw new System.NotImplementedException();
+            Render(delta, 0);
         }
     }
 }

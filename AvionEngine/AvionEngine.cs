@@ -2,6 +2,7 @@
 using AvionEngine.Enums;
 using AvionEngine.Interfaces;
 using AvionEngine.Rendering;
+using AvionEngine.Structures;
 
 namespace AvionEngine
 {
@@ -39,9 +40,30 @@ namespace AvionEngine
             return new BaseMesh(Renderer.CreateMesh(vertices, indices, usageMode, drawMode));
         }
 
-        public BaseTexture CreateTexture2D(uint width, uint height, byte[] data, TextureFormatMode format = TextureFormatMode.RGB)
+        public BaseTexture CreateTexture(
+            TextureInfo textureData,
+            TextureTargetMode targetMode = TextureTargetMode.Texture2D,
+            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            WrapMode wrapModeS = WrapMode.Repeat,
+            WrapMode wrapModeT = WrapMode.Repeat,
+            WrapMode wrapModeR = WrapMode.Repeat,
+            MinFilterMode minFilterMode = MinFilterMode.Linear,
+            MagFilterMode magFilterMode = MagFilterMode.Linear)
         {
-            return new BaseTexture(Renderer.CreateTexture(width, height, data));
+            return new BaseTexture(Renderer.CreateTexture(textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode));
+        }
+
+        public BaseTexture CreateTexture(
+            TextureInfo[] textureData,
+            TextureTargetMode targetMode = TextureTargetMode.Texture2D,
+            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            WrapMode wrapModeS = WrapMode.Repeat,
+            WrapMode wrapModeT = WrapMode.Repeat,
+            WrapMode wrapModeR = WrapMode.Repeat,
+            MinFilterMode minFilterMode = MinFilterMode.Linear,
+            MagFilterMode magFilterMode = MagFilterMode.Linear)
+        {
+            return new BaseTexture(Renderer.CreateTexture(textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode));
         }
 
         private void Resize(Silk.NET.Maths.Vector2D<int> newSize)

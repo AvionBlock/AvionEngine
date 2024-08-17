@@ -1,6 +1,7 @@
 ﻿using System;
 using AvionEngine.Enums;
 using AvionEngine.Interfaces;
+using AvionEngine.Structures;
 using Silk.NET.OpenGL;
 
 namespace AvionEngine.OpenGL.Rendering
@@ -20,10 +21,7 @@ namespace AvionEngine.OpenGL.Rendering
         public bool IsDisposed { get; private set; }
 
         public Texture(GL glInstance,
-            uint width,
-            uint height,
-            byte[] data,
-            uint depth = 0,
+            TextureInfo textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
             TextureFormatMode formatMode = TextureFormatMode.RGB,
             WrapMode wrapModeS = WrapMode.Repeat,
@@ -42,31 +40,54 @@ namespace AvionEngine.OpenGL.Rendering
             this.magFilterMode = magFilterMode;
 
             texture = glInstance.GenTexture();
-            Update(width, height, data, depth);
+            Update(textureData);
         }
 
-        public unsafe void Update(uint width, uint height, byte[] data, uint depth = 0,
+        public Texture(GL glInstance,
+            TextureInfo[] textureData,
+            TextureTargetMode targetMode = TextureTargetMode.Texture2D,
+            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            WrapMode wrapModeS = WrapMode.Repeat,
+            WrapMode wrapModeT = WrapMode.Repeat,
+            WrapMode wrapModeR = WrapMode.Repeat,
+            MinFilterMode minFilterMode = MinFilterMode.Linear,
+            MagFilterMode magFilterMode = MagFilterMode.Linear)
+        {
+            this.glInstance = glInstance;
+            this.targetMode = targetMode;
+            this.formatMode = formatMode;
+            this.wrapModeS = wrapModeS;
+            this.wrapModeT = wrapModeT;
+            this.wrapModeR = wrapModeR;
+            this.minFilterMode = minFilterMode;
+            this.magFilterMode = magFilterMode;
+
+            texture = glInstance.GenTexture();
+            Update(textureData);
+        }
+
+        public unsafe void Update(TextureInfo textureData,
             TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null)
         {
             this.targetMode = targetMode ?? this.targetMode;
             this.formatMode = formatMode ?? this.formatMode;
 
             glInstance.BindTexture(GetTextureTarget(this.targetMode), texture);
-            fixed (byte* dataPtr = data)
+            fixed (byte* dataPtr = textureData.Data)
             {
                 switch (this.targetMode)
                 {
                     case TextureTargetMode.Texture1D:
                         glInstance.TexImage1D(GetTextureTarget(this.targetMode), 0, GetInternalFormat(this.formatMode),
-                            width, 0, GetPixelFormat(this.formatMode), GLEnum.UnsignedByte, dataPtr);
+                            textureData.Width, 0, GetPixelFormat(this.formatMode), GLEnum.UnsignedByte, dataPtr);
                         break;
                     case TextureTargetMode.Texture2D:
                         glInstance.TexImage2D(GetTextureTarget(this.targetMode), 0, GetInternalFormat(this.formatMode),
-                            width, height, 0, GetPixelFormat(this.formatMode), GLEnum.UnsignedByte, dataPtr);
+                            textureData.Width, textureData.Height, 0, GetPixelFormat(this.formatMode), GLEnum.UnsignedByte, dataPtr);
                         break;
                     case TextureTargetMode.Texture3D:
                         glInstance.TexImage3D(GetTextureTarget(this.targetMode), 0, GetInternalFormat(this.formatMode),
-                            width, height, depth, 0, GetPixelFormat(this.formatMode), GLEnum.UnsignedByte, dataPtr);
+                            textureData.Width, textureData.Height, textureData.Depth, 0, GetPixelFormat(this.formatMode), GLEnum.UnsignedByte, dataPtr);
                         break;
                     case TextureTargetMode.CubeMap:
                     default:
@@ -79,16 +100,9 @@ namespace AvionEngine.OpenGL.Rendering
             glInstance.BindTexture(GetTextureTarget(this.targetMode), 0); //Unbind Texture.
         }
 
-        public unsafe void Update(uint[] width, uint[] height, byte[][] data,
+        public unsafe void Update(TextureInfo[] textureData,
             TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null)
-        {
-            if(width.Length != 6)
-                throw new ArgumentOutOfRangeException(nameof(width), "Width must have 6 values.");
-            if(height.Length != 6)
-                throw new ArgumentOutOfRangeException(nameof(height), "Height must have 6 values.");
-            if(data.Length != 6)
-                throw new ArgumentOutOfRangeException(nameof(data), "Data must have 6 values.");
-            
+        {   
             this.targetMode = targetMode ?? this.targetMode;
             this.formatMode = formatMode ?? this.formatMode;
 
@@ -96,12 +110,15 @@ namespace AvionEngine.OpenGL.Rendering
             switch (this.targetMode)
             {
                 case TextureTargetMode.CubeMap:
-                    for (var i = 0; i < data.Length; i++)
+                    if (textureData.Length != 6)
+                        throw new ArgumentOutOfRangeException(nameof(textureData), $"Must have 6 textures for a target mode of {this.targetMode}.");
+
+                    for (var i = 0; i < textureData.Length; i++)
                     {
-                        fixed (byte* dataPtr = data[i])
+                        fixed (byte* dataPtr = textureData[i].Data)
                         {
                             glInstance.TexImage2D(TextureTarget.TextureCubeMapPositiveX + i, 0,
-                                GetInternalFormat(this.formatMode), width[i], height[i], 0,
+                                GetInternalFormat(this.formatMode), textureData[i].Width, textureData[i].Height, 0,
                                 GetPixelFormat(this.formatMode), GLEnum.UnsignedByte, dataPtr);
                         }
                     }

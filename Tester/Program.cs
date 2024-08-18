@@ -49,6 +49,7 @@ window.Run();
 
 void OnLoad()
 {
+    StbImage.stbi_set_flip_vertically_on_load(1);
     var image = ImageResult.FromStream(stream, ColorComponents.RedGreenBlueAlpha);
     var renderer = new Renderer(window);
     renderer.SetClearColor(Color.Aqua);
@@ -63,14 +64,21 @@ void OnLoad()
         2,3,0],
         AvionEngine.Enums.UsageMode.Static);
 
+    var mesh2 = engine.CreateMesh<Vertex>(
+    [new Vertex(0.5f, -0.5f, 0.0f),
+         new Vertex(0.5f, -1.0f, 0.0f),
+         new Vertex(-0.5f, -1.0f, 0.0f),],
+    [0,1,2],
+    AvionEngine.Enums.UsageMode.Static);
+
     var camera = engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0,0,1), Rotation = Quaternion<float>.CreateFromAxisAngle(Vector3D<float>.UnitX, -90 * (MathF.PI / 180)) }, new CameraComponent(engine.CreateShader(projVert, projFrag)) { AspectSize = window.Size });
     engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0, 0f, 0f) }, new MeshComponent(mesh) { Texture = new AvionEngine.Rendering.BaseTexture(img) });
+    engine.World.Create(new TransformComponent() { Position = new Vector3D<float>(0, 1f, 0f) }, new MeshComponent(mesh2));
 
     IInputContext input = window.CreateInput();
     primaryKeyboard = input.Keyboards.FirstOrDefault();
     for (int i = 0; i < input.Mice.Count; i++)
     {
-        input.Mice[i].Cursor.CursorMode = CursorMode.Raw;
         input.Mice[i].MouseMove += OnMouseMove;
     }
 

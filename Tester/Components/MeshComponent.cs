@@ -7,6 +7,7 @@ namespace Tester.Components
     {
         public BaseMesh Mesh { get; set; }
         public List<IVisual> Materials { get; set; }
+        public BaseTexture? Texture { get; set; }
 
         public MeshComponent(BaseMesh mesh)
         {
@@ -16,6 +17,7 @@ namespace Tester.Components
 
         public void Render(double delta)
         {
+            Texture?.Render(delta);
             for (int i = 0; i < Materials?.Count; i++)
             {
                 Materials[i].Render(delta);

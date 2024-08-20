@@ -32,7 +32,5 @@ namespace AvionEngine.Interfaces
             WrapMode wrapModeR = WrapMode.Repeat,
             MinFilterMode minFilterMode = MinFilterMode.Linear,
             MagFilterMode magFilterMode = MagFilterMode.Linear);
-
-        World World { get; }
     }
 }

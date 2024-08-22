@@ -1,13 +1,15 @@
-﻿using Arch.Core;
-using AvionEngine.Enums;
+﻿using AvionEngine.Enums;
 using AvionEngine.Rendering;
 using AvionEngine.Structures;
+using System.Drawing;
 
 namespace AvionEngine.Interfaces
 {
     public interface IEngine
     {
         IRenderer Renderer { get; }
+
+        void SetClearColor(Color color);
 
         BaseShader CreateShader(string vertex, string fragment);
 

@@ -3,6 +3,7 @@ using AvionEngine.Enums;
 using AvionEngine.Interfaces;
 using AvionEngine.Rendering;
 using AvionEngine.Structures;
+using System.Drawing;
 
 namespace AvionEngine
 {
@@ -26,6 +27,11 @@ namespace AvionEngine
 
             Renderer.Window.Update += Update;
             //NOT FINISHED!
+        }
+
+        public void SetClearColor(Color color)
+        {
+            Renderer.SetClearColor(color);
         }
 
         public BaseShader CreateShader(string vertex, string fragment)

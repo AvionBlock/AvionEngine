@@ -2,6 +2,7 @@
 using AvionEngine.Structures;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
+using System;
 using System.Drawing;
 
 namespace AvionEngine.Interfaces
@@ -33,6 +34,10 @@ namespace AvionEngine.Interfaces
             WrapMode wrapModeR = WrapMode.Repeat,
             MinFilterMode minFilterMode = MinFilterMode.Linear,
             MagFilterMode magFilterMode = MagFilterMode.Linear);
+
+        void Execute(Action action);
+
+        void ExecuteQueue();
 
         void Resize(Vector2D<int> newSize);
         

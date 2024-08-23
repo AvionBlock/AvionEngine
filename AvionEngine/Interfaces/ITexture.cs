@@ -6,6 +6,8 @@ namespace AvionEngine.Interfaces
 {
     public interface ITexture : IVisual, IDisposable
     {
+        IRenderer Renderer { get; }
+
         bool IsDisposed { get; }
 
         void Update(TextureInfo textureData, TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null);

@@ -7,14 +7,15 @@ namespace AvionEngine.OpenGL.Rendering
 {
     public class Shader : IShader
     {
-        private readonly GL glInstance;
+        private readonly Renderer renderer;
         private uint program;
 
+        public IRenderer Renderer { get => renderer; }
         public bool IsDisposed { get; private set; }
 
-        public Shader(GL glInstance, string vertex, string fragment)
+        public Shader(Renderer renderer, string vertex, string fragment)
         {
-            this.glInstance = glInstance;
+            this.renderer = renderer;
             Load(vertex, fragment);
         }
 
@@ -23,7 +24,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.UseProgram(program);
+            renderer.glContext.UseProgram(program);
         }
 
         public void Update(string vertexCode, string fragmentCode)
@@ -31,7 +32,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.DeleteProgram(program);
+            renderer.glContext.DeleteProgram(program);
             Load(vertexCode, fragmentCode);
         }
 
@@ -40,7 +41,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.Uniform1(glInstance.GetUniformLocation(program, name), value ? 1 : 0);
+            renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value ? 1 : 0);
         }
 
         public void SetInt(string name, int value)
@@ -48,7 +49,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.Uniform1(glInstance.GetUniformLocation(program, name), value);
+            renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value);
         }
 
         public void SetUInt(string name, uint value)
@@ -56,7 +57,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.Uniform1(glInstance.GetUniformLocation(program, name), value);
+            renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value);
         }
 
         public void SetFloat(string name, float value)
@@ -64,7 +65,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.Uniform1(glInstance.GetUniformLocation(program, name), value);
+            renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value);
         }
 
         public unsafe void SetUniform2(string name, Matrix2X2<float> value)
@@ -72,7 +73,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.UniformMatrix2(glInstance.GetUniformLocation(program, name), 1, true, (float*)&value);
+            renderer.glContext.UniformMatrix2(renderer.glContext.GetUniformLocation(program, name), 1, true, (float*)&value);
         }
 
         public unsafe void SetUniform3(string name, Matrix3X3<float> value)
@@ -80,7 +81,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.UniformMatrix3(glInstance.GetUniformLocation(program, name), 1, true, (float*)&value);
+            renderer.glContext.UniformMatrix3(renderer.glContext.GetUniformLocation(program, name), 1, true, (float*)&value);
         }
 
         public unsafe void SetUniform4(string name, Matrix4X4<float> value)
@@ -88,7 +89,7 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
 
-            glInstance.UniformMatrix4(glInstance.GetUniformLocation(program, name), 1, true, (float*)&value);
+            renderer.glContext.UniformMatrix4(renderer.glContext.GetUniformLocation(program, name), 1, true, (float*)&value);
         }
 
         public void Dispose()
@@ -103,7 +104,7 @@ namespace AvionEngine.OpenGL.Rendering
 
             if(disposing)
             {
-                glInstance.DeleteProgram(program);
+                renderer.glContext.DeleteProgram(program);
             }
 
             IsDisposed = true;
@@ -125,40 +126,40 @@ namespace AvionEngine.OpenGL.Rendering
         private void Load(string vertexCode, string fragmentCode)
         {
             //Create Vertex Shader
-            var vertex = glInstance.CreateShader(ShaderType.VertexShader);
-            glInstance.ShaderSource(vertex, vertexCode);
+            var vertex = renderer.glContext.CreateShader(ShaderType.VertexShader);
+            renderer.glContext.ShaderSource(vertex, vertexCode);
 
             //Create Fragment Shader
-            var fragment = glInstance.CreateShader(ShaderType.FragmentShader);
-            glInstance.ShaderSource(fragment, fragmentCode);
+            var fragment = renderer.glContext.CreateShader(ShaderType.FragmentShader);
+            renderer.glContext.ShaderSource(fragment, fragmentCode);
             try
             {
                 //Compile and cleanup on error before rethrowing.
-                Compile(glInstance, vertex);
-                Compile(glInstance, fragment);
+                Compile(renderer.glContext, vertex);
+                Compile(renderer.glContext, fragment);
             }
             catch (Exception)
             {
-                glInstance.DeleteShader(vertex); //Cleanup
-                glInstance.DeleteShader(fragment);
+                renderer.glContext.DeleteShader(vertex); //Cleanup
+                renderer.glContext.DeleteShader(fragment);
                 throw;
             }
 
-            program = glInstance.CreateProgram(); //Create the shader itself.
+            program = renderer.glContext.CreateProgram(); //Create the shader itself.
 
             //attach and link the vertex and fragment shaders to the program.
-            glInstance.AttachShader(program, vertex);
-            glInstance.AttachShader(program, fragment);
-            glInstance.LinkProgram(program);
+            renderer.glContext.AttachShader(program, vertex);
+            renderer.glContext.AttachShader(program, fragment);
+            renderer.glContext.LinkProgram(program);
 
             //Error Handling.
-            glInstance.GetProgram(program, ProgramPropertyARB.LinkStatus, out int lStatus);
+            renderer.glContext.GetProgram(program, ProgramPropertyARB.LinkStatus, out int lStatus);
             if (lStatus != (int)GLEnum.True)
-                throw new Exception("Program failed to link: " + glInstance.GetProgramInfoLog(program));
+                throw new Exception("Program failed to link: " + renderer.glContext.GetProgramInfoLog(program));
 
             //Delete Vertex and Fragment since they are now linked.
-            glInstance.DeleteShader(vertex);
-            glInstance.DeleteShader(fragment);
+            renderer.glContext.DeleteShader(vertex);
+            renderer.glContext.DeleteShader(fragment);
         }
     }
 }

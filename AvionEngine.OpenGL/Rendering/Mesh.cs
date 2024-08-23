@@ -11,7 +11,7 @@ namespace AvionEngine.OpenGL.Rendering
 {
     public class Mesh : IMesh
     {
-        private readonly GL glInstance;
+        private readonly Renderer renderer;
         private readonly uint VBO;
         private readonly uint VAO;
         private readonly uint EBO;
@@ -20,21 +20,22 @@ namespace AvionEngine.OpenGL.Rendering
         private UsageMode usageMode;
         private Type? vertexType;
 
+        public IRenderer Renderer { get => renderer; }
         public bool IsDisposed { get; private set; }
 
-        public Mesh(GL glInstance, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles)
+        public Mesh(Renderer renderer, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Mesh));
 
-            this.glInstance = glInstance;
+            this.renderer = renderer;
             this.usageMode = usageMode;
             this.drawMode = drawMode;
 
             //Create Buffers and Arrays
-            VAO = glInstance.GenVertexArray();
-            VBO = glInstance.GenBuffer();
-            EBO = glInstance.GenBuffer();
+            VAO = this.renderer.glContext.GenVertexArray();
+            VBO = this.renderer.glContext.GenBuffer();
+            EBO = this.renderer.glContext.GenBuffer();
         }
 
         public unsafe void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode? usageMode = null, DrawMode? drawMode = null) where TVertex : unmanaged
@@ -44,23 +45,23 @@ namespace AvionEngine.OpenGL.Rendering
             this.usageMode = usageMode ?? this.usageMode;
             this.drawMode = drawMode ?? this.drawMode;
 
-            glInstance.BindVertexArray(VAO);
+            renderer.glContext.BindVertexArray(VAO);
 
             //Load data
-            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
+            renderer.glContext.BindBuffer(BufferTargetARB.ArrayBuffer, VBO);
             fixed (void* verticesPtr = vertices)
-                glInstance.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(TVertex)), verticesPtr, GetBufferUsageARB(this.usageMode));
+                renderer.glContext.BufferData(BufferTargetARB.ArrayBuffer, (UIntPtr)(vertices.Length * sizeof(TVertex)), verticesPtr, GetBufferUsageARB(this.usageMode));
 
-            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
+            renderer.glContext.BindBuffer(BufferTargetARB.ElementArrayBuffer, EBO);
             fixed (uint* indicesPtr = indices)
-                glInstance.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, GetBufferUsageARB(this.usageMode));
+                renderer.glContext.BufferData(BufferTargetARB.ElementArrayBuffer, (UIntPtr)(indices.Length * sizeof(uint)), indicesPtr, GetBufferUsageARB(this.usageMode));
 
             if(typeof(TVertex) != vertexType)
                 UpdateVertexType<TVertex>();
 
-            glInstance.BindVertexArray(0);
-            glInstance.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
-            glInstance.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
+            renderer.glContext.BindVertexArray(0);
+            renderer.glContext.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
+            renderer.glContext.BindBuffer(BufferTargetARB.ElementArrayBuffer, 0);
             indicesLength = (uint)indices.Length;
         }
 
@@ -74,8 +75,8 @@ namespace AvionEngine.OpenGL.Rendering
                 if (fieldSize <= 0)
                     fieldSize = 1;
 
-                glInstance.EnableVertexAttribArray(i);
-                glInstance.VertexAttribPointer(
+                renderer.glContext.EnableVertexAttribArray(i);
+                renderer.glContext.VertexAttribPointer(
                     i,
                     fieldSize,
                     GetVertexAttribPointerType(verticesFields[i].GetCustomAttribute<VertexField>().FieldType),
@@ -92,9 +93,9 @@ namespace AvionEngine.OpenGL.Rendering
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Mesh));
 
-            glInstance.BindVertexArray(VAO);
-            glInstance.DrawElements(GetPrimitiveType(drawMode), indicesLength, DrawElementsType.UnsignedInt, (void*)0);
-            glInstance.BindVertexArray(0);
+            renderer.glContext.BindVertexArray(VAO);
+            renderer.glContext.DrawElements(GetPrimitiveType(drawMode), indicesLength, DrawElementsType.UnsignedInt, (void*)0);
+            renderer.glContext.BindVertexArray(0);
         }
 
         public void Dispose()
@@ -109,9 +110,9 @@ namespace AvionEngine.OpenGL.Rendering
 
             if (disposing)
             {
-                glInstance.DeleteVertexArray(VAO);
-                glInstance.DeleteBuffer(VBO);
-                glInstance.DeleteBuffer(EBO);
+                renderer.glContext.DeleteVertexArray(VAO);
+                renderer.glContext.DeleteBuffer(VBO);
+                renderer.glContext.DeleteBuffer(EBO);
             }
 
             IsDisposed = true;

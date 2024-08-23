@@ -10,8 +10,6 @@ namespace AvionEngine.Interfaces
     {
         IRenderer Renderer { get; }
 
-        void Execute(Action action);
-
         void SetClearColor(Color color);
 
         BaseShader CreateShader(string vertex, string fragment);

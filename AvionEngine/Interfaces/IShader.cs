@@ -5,6 +5,8 @@ namespace AvionEngine.Interfaces
 {
     public interface IShader : IVisual, IDisposable
     {
+        IRenderer Renderer { get; }
+
         bool IsDisposed { get; }
 
         void Update(string vertexCode, string fragmentCode);

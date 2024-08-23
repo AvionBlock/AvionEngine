@@ -2,30 +2,20 @@
 using AvionEngine.Interfaces;
 using AvionEngine.Rendering;
 using AvionEngine.Structures;
-using System;
-using System.Collections.Concurrent;
 using System.Drawing;
-using System.Linq;
 
 namespace AvionEngine
 {
     public class AvionEngine : IEngine
     {
-        private ConcurrentQueue<Action> Executions;
         public IRenderer Renderer { get; private set; } //We can swap out rendering engines.
 
         public AvionEngine(IRenderer renderer)
         {
             Renderer = renderer; //Set the renderer the user wants first.
-            Executions = new ConcurrentQueue<Action>();
 
             renderer.Window.Resize += Resize;
             renderer.Window.Update += Update;
-        }
-
-        public void Execute(Action action)
-        {
-            Executions.Enqueue(action);
         }
 
         public void SetRenderer(IRenderer renderer)
@@ -86,13 +76,7 @@ namespace AvionEngine
 
         private void Update(double delta)
         {
-            while(Executions.Any())
-            {
-                if(Executions.TryDequeue(out var action))
-                {
-                    action.Invoke();
-                }
-            }
+            Renderer.ExecuteQueue();
             Renderer.Clear();
         }
     }

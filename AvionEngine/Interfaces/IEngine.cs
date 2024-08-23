@@ -1,6 +1,7 @@
 ﻿using AvionEngine.Enums;
 using AvionEngine.Rendering;
 using AvionEngine.Structures;
+using System;
 using System.Drawing;
 
 namespace AvionEngine.Interfaces
@@ -8,6 +9,8 @@ namespace AvionEngine.Interfaces
     public interface IEngine
     {
         IRenderer Renderer { get; }
+
+        void Execute(Action action);
 
         void SetClearColor(Color color);
 

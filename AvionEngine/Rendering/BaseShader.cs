@@ -17,9 +17,9 @@ namespace AvionEngine.Rendering
             this.nativeShader = nativeShader;
         }
 
-        public virtual void Reload()
+        public virtual void Reload(string vertexCode, string fragmentCode)
         {
-            throw new NotImplementedException();
+            NativeShader.Update(vertexCode, fragmentCode);
         }
 
         public virtual void Render(double delta)

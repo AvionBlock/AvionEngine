@@ -1,17 +1,17 @@
 ﻿using AvionEngine.Interfaces;
+using AvionEngine.Rendering;
 using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using System;
 
 namespace AvionEngine.OpenGL.Rendering
 {
-    public class Shader : IShader
+    public class Shader : BaseShader
     {
         private readonly Renderer renderer;
         private uint program;
 
-        public IRenderer Renderer { get => renderer; }
-        public bool IsDisposed { get; private set; }
+        public override IRenderer Renderer { get => renderer; }
 
         public Shader(Renderer renderer, string vertex, string fragment)
         {
@@ -19,7 +19,7 @@ namespace AvionEngine.OpenGL.Rendering
             Load(vertex, fragment);
         }
 
-        public void Render(double delta)
+        public override void Render(double delta)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -27,7 +27,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.UseProgram(program);
         }
 
-        public void Update(string vertexCode, string fragmentCode)
+        public override void Reload(string vertexCode, string fragmentCode)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -36,7 +36,7 @@ namespace AvionEngine.OpenGL.Rendering
             Load(vertexCode, fragmentCode);
         }
 
-        public void SetBool(string name, bool value)
+        public override void SetBool(string name, bool value)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -44,7 +44,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value ? 1 : 0);
         }
 
-        public void SetInt(string name, int value)
+        public override void SetInt(string name, int value)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -52,7 +52,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value);
         }
 
-        public void SetUInt(string name, uint value)
+        public override void SetUInt(string name, uint value)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -60,7 +60,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value);
         }
 
-        public void SetFloat(string name, float value)
+        public override void SetFloat(string name, float value)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -68,7 +68,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.Uniform1(renderer.glContext.GetUniformLocation(program, name), value);
         }
 
-        public unsafe void SetUniform2(string name, Matrix2X2<float> value)
+        public override unsafe void SetUniform2(string name, Matrix2X2<float> value)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -76,7 +76,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.UniformMatrix2(renderer.glContext.GetUniformLocation(program, name), 1, true, (float*)&value);
         }
 
-        public unsafe void SetUniform3(string name, Matrix3X3<float> value)
+        public override unsafe void SetUniform3(string name, Matrix3X3<float> value)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -84,7 +84,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.UniformMatrix3(renderer.glContext.GetUniformLocation(program, name), 1, true, (float*)&value);
         }
 
-        public unsafe void SetUniform4(string name, Matrix4X4<float> value)
+        public override unsafe void SetUniform4(string name, Matrix4X4<float> value)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Shader));
@@ -92,7 +92,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.UniformMatrix4(renderer.glContext.GetUniformLocation(program, name), 1, true, (float*)&value);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

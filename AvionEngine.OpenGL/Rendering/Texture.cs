@@ -1,12 +1,13 @@
 ﻿using System;
 using AvionEngine.Enums;
 using AvionEngine.Interfaces;
+using AvionEngine.Rendering;
 using AvionEngine.Structures;
 using Silk.NET.OpenGL;
 
 namespace AvionEngine.OpenGL.Rendering
 {
-    public class Texture : ITexture
+    public class Texture : BaseTexture
     {
         private readonly Renderer renderer;
         private readonly uint texture;
@@ -17,9 +18,8 @@ namespace AvionEngine.OpenGL.Rendering
         private WrapMode wrapModeR;
         private MinFilterMode minFilterMode;
         private MagFilterMode magFilterMode;
-        
-        public IRenderer Renderer { get => renderer; }
-        public bool IsDisposed { get; private set; }
+
+        public override IRenderer Renderer { get => renderer; }
 
         public Texture(Renderer renderer,
             TextureInfo textureData,
@@ -67,7 +67,7 @@ namespace AvionEngine.OpenGL.Rendering
             Update(textureData);
         }
 
-        public unsafe void Update(TextureInfo textureData,
+        public override unsafe void Update(TextureInfo textureData,
             TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null)
         {
             this.targetMode = targetMode ?? this.targetMode;
@@ -101,7 +101,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.BindTexture(GetTextureTarget(this.targetMode), 0); //Unbind Texture.
         }
 
-        public unsafe void Update(TextureInfo[] textureData,
+        public override unsafe void Update(TextureInfo[] textureData,
             TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null)
         {   
             this.targetMode = targetMode ?? this.targetMode;
@@ -136,7 +136,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.BindTexture(GetTextureTarget(this.targetMode), 0); //Unbind Texture.
         }
 
-        public void UpdateWrapMode(WrapMode? wrapModeS = null, WrapMode? wrapModeT = null, WrapMode? wrapModeR = null)
+        public override void UpdateWrapMode(WrapMode? wrapModeS = null, WrapMode? wrapModeT = null, WrapMode? wrapModeR = null)
         {
             this.wrapModeS = wrapModeS ?? this.wrapModeS;
             this.wrapModeT = wrapModeT ?? this.wrapModeT;
@@ -153,7 +153,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.BindTexture(GetTextureTarget(targetMode), 0); //Unbind the texture.
         }
 
-        public void UpdateFilterMode(MinFilterMode? minFilterMode = null, MagFilterMode? magFilterMode = null)
+        public override void UpdateFilterMode(MinFilterMode? minFilterMode = null, MagFilterMode? magFilterMode = null)
         {
             this.minFilterMode = minFilterMode ?? this.minFilterMode;
             this.magFilterMode = magFilterMode ?? this.magFilterMode;
@@ -167,17 +167,17 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.BindTexture(GetTextureTarget(targetMode), 0); //Unbind the texture.
         }
 
-        public void Assign(int unit = 0)
+        public override void Assign(int unit = 0)
         {
             renderer.glContext.ActiveTexture(TextureUnit.Texture0 + unit);
         }
 
-        public void Render(double delta)
+        public override void Render(double delta)
         {
             renderer.glContext.BindTexture(GetTextureTarget(targetMode), texture);
         }
         
-        public void Dispose()
+        public override void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

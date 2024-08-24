@@ -35,12 +35,12 @@ namespace AvionEngine
 
         public BaseShader CreateShader(string vertex, string fragment)
         {
-            return new BaseShader(Renderer.CreateShader(vertex, fragment));
+            return Renderer.CreateShader(vertex, fragment);
         }
 
         public BaseMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles) where TVertex : unmanaged
         {
-            return new BaseMesh(Renderer.CreateMesh(vertices, indices, usageMode, drawMode));
+            return Renderer.CreateMesh(vertices, indices, usageMode, drawMode);
         }
 
         public BaseTexture CreateTexture(
@@ -53,7 +53,7 @@ namespace AvionEngine
             MinFilterMode minFilterMode = MinFilterMode.Linear,
             MagFilterMode magFilterMode = MagFilterMode.Linear)
         {
-            return new BaseTexture(Renderer.CreateTexture(textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode));
+            return Renderer.CreateTexture(textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode);
         }
 
         public BaseTexture CreateTexture(
@@ -66,7 +66,7 @@ namespace AvionEngine
             MinFilterMode minFilterMode = MinFilterMode.Linear,
             MagFilterMode magFilterMode = MagFilterMode.Linear)
         {
-            return new BaseTexture(Renderer.CreateTexture(textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode));
+            return Renderer.CreateTexture(textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode);
         }
 
         private void Resize(Silk.NET.Maths.Vector2D<int> newSize)

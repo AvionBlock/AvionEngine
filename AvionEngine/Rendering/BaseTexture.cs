@@ -1,30 +1,33 @@
-﻿using AvionEngine.Interfaces;
+﻿using AvionEngine.Enums;
+using AvionEngine.Interfaces;
+using AvionEngine.Structures;
+using System;
 
 namespace AvionEngine.Rendering
 {
-    public class BaseTexture : IVisual
+    public abstract class BaseTexture : IVisual, IDisposable
     {
-        private ITexture nativeTexture;
-        public virtual ITexture NativeTexture
-        {
-            get => nativeTexture;
-            set => nativeTexture = value;
-        } //We can swap out native mesh if we need to. Give the option to the user to set or ignore setting the NativeMesh.
+        public abstract IRenderer Renderer { get; }
+        public bool IsDisposed { get; protected set; }
 
-        public BaseTexture(ITexture nativeTexture)
+        public virtual void Render(double delta, int unit)
         {
-            this.nativeTexture = nativeTexture;
+            Assign(unit);
+            Render(delta);
         }
 
-        public void Render(double delta, int unit)
-        {
-            nativeTexture.Assign(unit);
-            nativeTexture.Render(delta);
-        }
+        public abstract void Render(double delta);
 
-        public void Render(double delta)
-        {
-            Render(delta, 0);
-        }
+        public abstract void Update(TextureInfo textureData, TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null);
+
+        public abstract void Update(TextureInfo[] textureData, TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null);
+
+        public abstract void UpdateWrapMode(WrapMode? wrapModeS = null, WrapMode? wrapModeT = null, WrapMode? wrapModeR = null);
+
+        public abstract void UpdateFilterMode(MinFilterMode? minFilterMode = null, MagFilterMode? magFilterMode = null);
+
+        public abstract void Assign(int unit = 0);
+
+        public abstract void Dispose();
     }
 }

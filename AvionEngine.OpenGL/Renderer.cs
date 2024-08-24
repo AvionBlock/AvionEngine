@@ -8,6 +8,7 @@ using AvionEngine.Structures;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using AvionEngine.Rendering;
 
 namespace AvionEngine.OpenGL
 {
@@ -25,19 +26,19 @@ namespace AvionEngine.OpenGL
             Executions = new ConcurrentQueue<Action>();
         }
 
-        public IShader CreateShader(string vertex, string fragment)
+        public BaseShader CreateShader(string vertex, string fragment)
         {
             return new Rendering.Shader(this, vertex, fragment);
         }
 
-        public IMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles) where TVertex : unmanaged
+        public BaseMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles) where TVertex : unmanaged
         {
             var mesh = new Rendering.Mesh(this, usageMode, drawMode);
             mesh.Update(vertices, indices);
             return mesh;
         }
 
-        public ITexture CreateTexture(
+        public BaseTexture CreateTexture(
             TextureInfo textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D, 
             TextureFormatMode formatMode = TextureFormatMode.RGB,
@@ -50,7 +51,7 @@ namespace AvionEngine.OpenGL
             return new Rendering.Texture(this, textureData, targetMode, formatMode, wrapModeS, wrapModeT, wrapModeR, minFilterMode, magFilterMode);
         }
 
-        public ITexture CreateTexture(
+        public BaseTexture CreateTexture(
             TextureInfo[] textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
             TextureFormatMode formatMode = TextureFormatMode.RGB,

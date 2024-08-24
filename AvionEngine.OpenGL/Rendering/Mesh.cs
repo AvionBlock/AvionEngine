@@ -6,10 +6,11 @@ using System.Reflection;
 using AvionEngine.Structures;
 using AvionEngine.Enums;
 using System.Linq;
+using AvionEngine.Rendering;
 
 namespace AvionEngine.OpenGL.Rendering
 {
-    public class Mesh : IMesh
+    public class Mesh : BaseMesh
     {
         private readonly Renderer renderer;
         private readonly uint VBO;
@@ -20,8 +21,7 @@ namespace AvionEngine.OpenGL.Rendering
         private UsageMode usageMode;
         private Type? vertexType;
 
-        public IRenderer Renderer { get => renderer; }
-        public bool IsDisposed { get; private set; }
+        public override IRenderer Renderer { get => renderer; }
 
         public Mesh(Renderer renderer, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles)
         {
@@ -38,7 +38,7 @@ namespace AvionEngine.OpenGL.Rendering
             EBO = this.renderer.glContext.GenBuffer();
         }
 
-        public unsafe void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode? usageMode = null, DrawMode? drawMode = null) where TVertex : unmanaged
+        public override unsafe void Update<TVertex>(TVertex[] vertices, uint[] indices, UsageMode? usageMode = null, DrawMode? drawMode = null)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Mesh));
@@ -65,7 +65,7 @@ namespace AvionEngine.OpenGL.Rendering
             indicesLength = (uint)indices.Length;
         }
 
-        public unsafe void UpdateVertexType<TVertex>() where TVertex : unmanaged
+        public override unsafe void UpdateVertexType<TVertex>()
         {
             var verticesFields = typeof(TVertex).GetFields().Where(x => Attribute.IsDefined(x, typeof(VertexField))).ToArray();
 
@@ -88,7 +88,7 @@ namespace AvionEngine.OpenGL.Rendering
             vertexType = typeof(TVertex);
         }
 
-        public unsafe void Render(double delta)
+        public override unsafe void Render(double delta)
         {
             if (IsDisposed)
                 throw new ObjectDisposedException(nameof(Mesh));
@@ -98,7 +98,7 @@ namespace AvionEngine.OpenGL.Rendering
             renderer.glContext.BindVertexArray(0);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

@@ -1,4 +1,5 @@
 ﻿using AvionEngine.Enums;
+using AvionEngine.Rendering;
 using AvionEngine.Structures;
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
@@ -11,11 +12,11 @@ namespace AvionEngine.Interfaces
     {
         IWindow Window { get; }
 
-        IShader CreateShader(string vertex, string fragment);
+        BaseShader CreateShader(string vertex, string fragment);
 
-        IMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles) where TVertex : unmanaged;
+        BaseMesh CreateMesh<TVertex>(TVertex[] vertices, uint[] indices, UsageMode usageMode = UsageMode.Static, DrawMode drawMode = DrawMode.Triangles) where TVertex : unmanaged;
 
-        ITexture CreateTexture(
+        BaseTexture CreateTexture(
             TextureInfo textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
             TextureFormatMode formatMode = TextureFormatMode.RGB,
@@ -25,7 +26,7 @@ namespace AvionEngine.Interfaces
             MinFilterMode minFilterMode = MinFilterMode.Linear,
             MagFilterMode magFilterMode = MagFilterMode.Linear);
 
-        ITexture CreateTexture(
+        BaseTexture CreateTexture(
             TextureInfo[] textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
             TextureFormatMode formatMode = TextureFormatMode.RGB,

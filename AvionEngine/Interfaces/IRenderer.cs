@@ -44,6 +44,12 @@ namespace AvionEngine.Interfaces
         
         void SetClearColor(Color color);
 
+        void SetDepthTest(bool enabled);
+
+        void SetDepthMask(bool enabled);
+
+        void SetWireframe(bool enabled);
+
         void Clear();
     }
 }

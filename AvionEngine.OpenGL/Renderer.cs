@@ -90,6 +90,28 @@ namespace AvionEngine.OpenGL
             glContext.ClearColor(color);
         }
 
+        public void SetDepthTest(bool enabled)
+        {
+            if(enabled)
+                glContext.Enable(EnableCap.DepthTest);
+            else
+                glContext.Disable(EnableCap.DepthTest);
+        }
+
+        public void SetDepthMask(bool enabled)
+        {
+            if (enabled)
+                glContext.DepthMask(enabled);
+        }
+
+        public void SetWireframe(bool enabled)
+        {
+            if (enabled)
+                glContext.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
+            else
+                glContext.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+        }
+
         public void Clear()
         {
             glContext.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);

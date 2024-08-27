@@ -2,6 +2,7 @@
 using AvionEngine.Interfaces;
 using AvionEngine.Rendering;
 using AvionEngine.Structures;
+using System;
 using System.Drawing;
 
 namespace AvionEngine
@@ -76,8 +77,15 @@ namespace AvionEngine
 
         private void Update(double delta)
         {
-            Renderer.ExecuteQueue();
-            Renderer.Clear();
+            try
+            {
+                Renderer.ExecuteQueue();
+                Renderer.Clear();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }

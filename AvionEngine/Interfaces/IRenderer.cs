@@ -19,7 +19,7 @@ namespace AvionEngine.Interfaces
         BaseTexture CreateTexture(
             TextureInfo textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
-            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            FormatType formatMode = FormatType.RGB,
             WrapMode wrapModeS = WrapMode.Repeat,
             WrapMode wrapModeT = WrapMode.Repeat,
             WrapMode wrapModeR = WrapMode.Repeat,
@@ -29,7 +29,7 @@ namespace AvionEngine.Interfaces
         BaseTexture CreateTexture(
             TextureInfo[] textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
-            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            FormatType formatMode = FormatType.RGB,
             WrapMode wrapModeS = WrapMode.Repeat,
             WrapMode wrapModeT = WrapMode.Repeat,
             WrapMode wrapModeR = WrapMode.Repeat,

@@ -1,14 +1,13 @@
-﻿using AvionEngine.Enums;
-using System;
+﻿using System;
 
 namespace AvionEngine.Structures
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class VertexField : Attribute
     {
-        public FieldType FieldType;
+        public FormatType FieldType;
 
-        public VertexField(FieldType fieldType)
+        public VertexField(FormatType fieldType)
         {
             FieldType = fieldType;
         }

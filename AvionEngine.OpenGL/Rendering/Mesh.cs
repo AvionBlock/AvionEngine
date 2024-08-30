@@ -65,29 +65,6 @@ namespace AvionEngine.OpenGL.Rendering
             indicesLength = (uint)indices.Length;
         }
 
-        public override unsafe void UpdateVertexType<TVertex>()
-        {
-            var verticesFields = typeof(TVertex).GetFields().Where(x => Attribute.IsDefined(x, typeof(VertexField))).ToArray();
-
-            for (uint i = 0; i < verticesFields.Length; i++)
-            {
-                var fieldSize = verticesFields[i].FieldType.GetFields().Length;
-                if (fieldSize <= 0)
-                    fieldSize = 1;
-
-                renderer.glContext.EnableVertexAttribArray(i);
-                renderer.glContext.VertexAttribPointer(
-                    i,
-                    fieldSize,
-                    GetVertexAttribPointerType(verticesFields[i].GetCustomAttribute<VertexField>().FieldType),
-                    false,
-                    (uint)sizeof(TVertex),
-                    (void*)Marshal.OffsetOf<TVertex>(verticesFields[i].Name));
-            }
-
-            vertexType = typeof(TVertex);
-        }
-
         public override unsafe void Render(double delta)
         {
             if (IsDisposed)

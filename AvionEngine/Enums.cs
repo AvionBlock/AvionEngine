@@ -25,34 +25,9 @@
         TriangleFan,
         Quads
     }
-    #endregion
-
-    #region Shader Enums
-    public enum ShaderStage
-    {
-        Vertex,
-        Geometry,
-        Pixel,
-        Compute
-    }
-    #endregion
-
-    #region Texture Enums
-    public enum TextureType
-    {
-        Texture1D,
-        Texture2D,
-        Texture3D,
-        CubeMap
-    }
-
-    public enum TextureWrapMode
-    {
-        Repeat
-    }
 
     //https://github.com/Aquatic-Games/grabs/blob/main/src/grabs.Graphics/Format.cs#L3
-    public enum TextureFormatMode
+    public enum FormatType
     {
         B5G6R5_UNorm,
         B5G5R5A1_UNorm,
@@ -140,6 +115,31 @@
         BC7_UNorm,
         BC7_UNorm_SRGB
     }
+    #endregion
+
+    #region Shader Enums
+    public enum ShaderStage
+    {
+        Vertex,
+        Geometry,
+        Pixel,
+        Compute
+    }
+    #endregion
+
+    #region Texture Enums
+    public enum TextureType
+    {
+        Texture1D,
+        Texture2D,
+        Texture3D,
+        CubeMap
+    }
+
+    public enum TextureWrapMode
+    {
+        Repeat
+    }
 
     public enum MagFilterMode
     {
@@ -153,18 +153,4 @@
         Nearest
     }
     #endregion
-
-    public enum FieldType
-    {
-        SByte,
-        Byte,
-        Int16,
-        UInt16,
-        Int32,
-        UInt32,
-        Int64,
-        UInt64,
-        Single,
-        Double
-    }
 }

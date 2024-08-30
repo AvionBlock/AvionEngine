@@ -12,7 +12,7 @@ namespace AvionEngine.OpenGL.Rendering
         private readonly Renderer renderer;
         private readonly uint texture;
         private TextureTargetMode targetMode;
-        private TextureFormatMode formatMode;
+        private FormatType formatMode;
         private WrapMode wrapModeS;
         private WrapMode wrapModeT;
         private WrapMode wrapModeR;
@@ -24,7 +24,7 @@ namespace AvionEngine.OpenGL.Rendering
         public Texture(Renderer renderer,
             TextureInfo textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
-            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            FormatType formatMode = FormatType.RGB,
             WrapMode wrapModeS = WrapMode.Repeat,
             WrapMode wrapModeT = WrapMode.Repeat,
             WrapMode wrapModeR = WrapMode.Repeat,
@@ -47,7 +47,7 @@ namespace AvionEngine.OpenGL.Rendering
         public Texture(Renderer renderer,
             TextureInfo[] textureData,
             TextureTargetMode targetMode = TextureTargetMode.Texture2D,
-            TextureFormatMode formatMode = TextureFormatMode.RGB,
+            FormatType formatMode = FormatType.RGB,
             WrapMode wrapModeS = WrapMode.Repeat,
             WrapMode wrapModeT = WrapMode.Repeat,
             WrapMode wrapModeR = WrapMode.Repeat,
@@ -68,7 +68,7 @@ namespace AvionEngine.OpenGL.Rendering
         }
 
         public override unsafe void Update(TextureInfo textureData,
-            TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null)
+            TextureTargetMode? targetMode = null, FormatType? formatMode = null)
         {
             this.targetMode = targetMode ?? this.targetMode;
             this.formatMode = formatMode ?? this.formatMode;
@@ -102,7 +102,7 @@ namespace AvionEngine.OpenGL.Rendering
         }
 
         public override unsafe void Update(TextureInfo[] textureData,
-            TextureTargetMode? targetMode = null, TextureFormatMode? formatMode = null)
+            TextureTargetMode? targetMode = null, FormatType? formatMode = null)
         {   
             this.targetMode = targetMode ?? this.targetMode;
             this.formatMode = formatMode ?? this.formatMode;
@@ -229,22 +229,22 @@ namespace AvionEngine.OpenGL.Rendering
             };
         }
 
-        private static InternalFormat GetInternalFormat(TextureFormatMode formatMode)
+        private static InternalFormat GetInternalFormat(FormatType formatMode)
         {
             return formatMode switch
             {
-                TextureFormatMode.RGB => InternalFormat.Rgb,
-                TextureFormatMode.RGBA => InternalFormat.Rgba,
+                FormatType.RGB => InternalFormat.Rgb,
+                FormatType.RGBA => InternalFormat.Rgba,
                 _ => throw new ArgumentOutOfRangeException(nameof(formatMode))
             };
         }
 
-        private static PixelFormat GetPixelFormat(TextureFormatMode formatMode)
+        private static PixelFormat GetPixelFormat(FormatType formatMode)
         {
             return formatMode switch
             {
-                TextureFormatMode.RGB => PixelFormat.Rgb,
-                TextureFormatMode.RGBA => PixelFormat.Rgba,
+                FormatType.RGB => PixelFormat.Rgb,
+                FormatType.RGBA => PixelFormat.Rgba,
                 _ => throw new ArgumentOutOfRangeException(nameof(formatMode))
             };
         }

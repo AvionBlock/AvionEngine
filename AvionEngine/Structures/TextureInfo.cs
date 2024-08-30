@@ -2,7 +2,7 @@
 {
     public struct TextureInfo
     {
-        public TextureFormatMode Format;
+        public FormatType Format;
         public uint Width;
         public uint Height;
         public uint Depth;

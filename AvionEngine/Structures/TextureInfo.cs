@@ -2,9 +2,11 @@
 {
     public struct TextureInfo
     {
+        public TextureFormatMode Format;
         public uint Width;
         public uint Height;
         public uint Depth;
-        public byte[] Data;
+        public uint MipLevels;
+        public byte[]?[] Data;
     }
 }

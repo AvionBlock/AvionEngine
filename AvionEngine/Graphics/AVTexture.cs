@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace AvionEngine.Rendering
+namespace AvionEngine.Graphics
 {
     public abstract class AVTexture : IDisposable
     {
@@ -161,17 +161,17 @@ namespace AvionEngine.Rendering
                         throw new ArgumentOutOfRangeException(nameof(textureFormatMode), textureFormatMode, null);
                 }
 
-                return Math.Max(1, ((width + 3) >> 2)) * blockSize;
+                return Math.Max(1, width + 3 >> 2) * blockSize;
             }
 
             uint bpp = BitsPerPixel(textureFormatMode);
-            return (width * bpp + 7) >> 3;
+            return width * bpp + 7 >> 3;
         }
 
         public static uint CalculateTextureSizeInBytes(TextureFormatMode textureFormatMode, uint width, uint height)
         {
             if (FormatIsCompressed(textureFormatMode))
-                return Math.Max(1, (width + 3) >> 2) * Math.Max(1, (height + 3) >> 2) * BitsPerPixel(textureFormatMode) * 2;
+                return Math.Max(1, width + 3 >> 2) * Math.Max(1, height + 3 >> 2) * BitsPerPixel(textureFormatMode) * 2;
 
             return CalculatePitch(textureFormatMode, width) * height;
         }

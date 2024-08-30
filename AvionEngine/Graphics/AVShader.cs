@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AvionEngine.Rendering
+namespace AvionEngine.Graphics
 {
     public abstract class AVShader : IDisposable
     {

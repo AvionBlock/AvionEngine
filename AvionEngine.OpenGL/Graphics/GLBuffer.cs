@@ -1,8 +1,8 @@
-﻿using AvionEngine.Rendering;
+﻿using AvionEngine.Graphics;
 using Silk.NET.OpenGL;
 using System;
 
-namespace AvionEngine.OpenGL.Rendering
+namespace AvionEngine.OpenGL.Graphics
 {
     public class GLBuffer : AVBuffer
     {

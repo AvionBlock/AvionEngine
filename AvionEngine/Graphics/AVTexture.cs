@@ -1,4 +1,6 @@
-﻿using AvionEngine.Structures;
+﻿using AvionEngine.Descriptors;
+using AvionEngine.Interfaces;
+using Silk.NET.SDL;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -8,16 +10,46 @@ namespace AvionEngine.Graphics
     {
         public readonly TextureType TextureType;
         public readonly FormatType FormatType;
+        public TextureWrapMode TextureWrapModeS { get; protected set; }
+        public TextureWrapMode TextureWrapModeT { get; protected set; }
+        public TextureWrapMode TextureWrapModeR { get; protected set; }
+        public MinFilterMode MinFilterMode { get; protected set; }
+        public MagFilterMode MagFilterMode { get; protected set; }
 
         public bool IsDisposed { get; protected set; }
 
-        public AVTexture(TextureType textureType, FormatType formatType)
+        public AVTexture(
+            TextureType textureType,
+            FormatType formatType,
+            TextureWrapMode textureWrapModeS = TextureWrapMode.Repeat,
+            TextureWrapMode textureWrapModeT = TextureWrapMode.Repeat,
+            TextureWrapMode textureWrapModeR = TextureWrapMode.Repeat,
+            MinFilterMode minFilterMode = MinFilterMode.Linear,
+            MagFilterMode magFilterMode = MagFilterMode.Linear)
         {
             TextureType = textureType;
             FormatType = formatType;
+            TextureWrapModeS = textureWrapModeS;
+            TextureWrapModeT = textureWrapModeT;
+            TextureWrapModeR = textureWrapModeR;
+            MinFilterMode = minFilterMode;
+            MagFilterMode = magFilterMode;
         }
 
-        public abstract void Update(TextureInfo textureInfo);
+        public abstract void Update(TextureDescriptor textureInfo);
+
+        public virtual void SetWrapMode(TextureWrapMode? textureWrapModeS = null, TextureWrapMode? textureWrapModeT = null, TextureWrapMode? textureWrapModeR = null)
+        {
+            TextureWrapModeS = textureWrapModeS ?? TextureWrapModeS;
+            TextureWrapModeT = textureWrapModeT ?? TextureWrapModeT;
+            TextureWrapModeR = textureWrapModeR ?? TextureWrapModeR;
+        }
+
+        public virtual void SetFilterMode(MinFilterMode? minFilterMode = null, MagFilterMode? magFilterMode = null)
+        {
+            MinFilterMode = minFilterMode ?? MinFilterMode;
+            MagFilterMode = magFilterMode ?? MagFilterMode;
+        }
 
         public abstract void Dispose();
 

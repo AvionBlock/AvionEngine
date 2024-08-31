@@ -1,5 +1,5 @@
-﻿using AvionEngine.Graphics;
-using AvionEngine.Structures;
+﻿using AvionEngine.Descriptors;
+using AvionEngine.Graphics;
 using Silk.NET.OpenGL;
 using System;
 
@@ -14,102 +14,127 @@ namespace AvionEngine.OpenGL.Graphics
         public readonly PixelFormat PixelFormat;
         public readonly PixelType PixelType;
 
-        public GLTexture(Renderer renderer, TextureType textureType, TextureInfo textureInfo) : base(textureType, textureInfo.Format)
+        public GLTexture(Renderer renderer, TextureType textureType, TextureDescriptor textureDescriptor) : base(textureType, textureDescriptor.Format)
         {
             this.renderer = renderer;
 
-            (InternalFormat, PixelFormat, PixelType) = GetTextureFormat(textureInfo.Format);
+            (InternalFormat, PixelFormat, PixelType) = GetTextureFormat(textureDescriptor.Format);
 
             Texture = renderer.glContext.GenTexture();
-            Update(textureInfo);
+            Update(textureDescriptor);
         }
 
-        public override unsafe void Update(TextureInfo textureInfo)
+        public override unsafe void Update(TextureDescriptor textureDescriptor)
         {
-            var isCompressed = FormatIsCompressed(textureInfo.Format);
+            var isCompressed = FormatIsCompressed(textureDescriptor.Format);
             renderer.glContext.BindTexture(GetTextureTarget(TextureType), Texture);
             switch (TextureType)
             {
                 case TextureType.Texture1D:
-                    renderer.glContext.TexStorage1D(GetTextureTarget(TextureType), textureInfo.MipLevels, InternalFormat, textureInfo.Width);
+                    renderer.glContext.TexStorage1D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width);
 
-                    fixed (void* dataPtr = textureInfo.Data[0])
+                    fixed (void* dataPtr = textureDescriptor.Data[0])
                     {
                         if (isCompressed)
                         {
-                            renderer.glContext.CompressedTexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureInfo.Width, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureInfo.Format, textureInfo.Width, textureInfo.Height), dataPtr);
+                            renderer.glContext.CompressedTexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
-                            renderer.glContext.TexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureInfo.Width, PixelFormat, PixelType, dataPtr);
+                            renderer.glContext.TexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, PixelFormat, PixelType, dataPtr);
                         }
                     }
 
-                    if (textureInfo.MipLevels == 0)
+                    if (textureDescriptor.MipLevels == 0)
                         renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     break;
                 case TextureType.Texture2D:
-                    renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureInfo.MipLevels, InternalFormat, textureInfo.Width, textureInfo.Height);
+                    renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height);
 
-                    fixed (void* dataPtr = textureInfo.Data[0])
+                    fixed (void* dataPtr = textureDescriptor.Data[0])
                     {
                         if (isCompressed)
                         {
-                            renderer.glContext.CompressedTexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureInfo.Width, textureInfo.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureInfo.Format, textureInfo.Width, textureInfo.Height), dataPtr);
+                            renderer.glContext.CompressedTexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
-                            renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureInfo.Width, textureInfo.Height, PixelFormat, PixelType, dataPtr);
+                            renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, PixelFormat, PixelType, dataPtr);
                         }
                     }
 
-                    if (textureInfo.MipLevels == 0)
+                    if (textureDescriptor.MipLevels == 0)
                         renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     break;
                 case TextureType.Texture3D:
-                    renderer.glContext.TexStorage3D(GetTextureTarget(TextureType), textureInfo.MipLevels, InternalFormat, textureInfo.Width, textureInfo.Height, textureInfo.Depth);
+                    renderer.glContext.TexStorage3D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth);
 
-                    fixed (void* dataPtr = textureInfo.Data[0])
+                    fixed (void* dataPtr = textureDescriptor.Data[0])
                     {
                         if (isCompressed)
                         {
-                            renderer.glContext.CompressedTexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureInfo.Width, textureInfo.Height, textureInfo.Depth, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureInfo.Format, textureInfo.Width, textureInfo.Height), dataPtr);
+                            renderer.glContext.CompressedTexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
-                            renderer.glContext.TexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureInfo.Width, textureInfo.Height, textureInfo.Depth, PixelFormat, PixelType, dataPtr);
+                            renderer.glContext.TexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, PixelFormat, PixelType, dataPtr);
                         }
                     }
 
-                    if (textureInfo.MipLevels == 0)
+                    if (textureDescriptor.MipLevels == 0)
                         renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     break;
                 case TextureType.CubeMap:
-                    renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureInfo.MipLevels, InternalFormat, textureInfo.Width, textureInfo.Height);
+                    renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height);
 
                     for (int a = 0; a < 6; a++)
                     {
                         TextureTarget target = TextureTarget.TextureCubeMapPositiveX + a;
-                        fixed (void* dataPtr = textureInfo.Data[a])
+                        fixed (void* dataPtr = textureDescriptor.Data[a])
                         {
                             if (isCompressed)
                             {
-                                renderer.glContext.CompressedTexSubImage2D(target, 0, 0, 0, textureInfo.Width, textureInfo.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureInfo.Format, textureInfo.Width, textureInfo.Height), dataPtr);
+                                renderer.glContext.CompressedTexSubImage2D(target, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                             }
                             else
                             {
-                                renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureInfo.Width, textureInfo.Height, PixelFormat, PixelType, dataPtr);
+                                renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, PixelFormat, PixelType, dataPtr);
                             }
                         }
 
-                        if (textureInfo.MipLevels == 0)
+                        if (textureDescriptor.MipLevels == 0)
                             renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     }
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(textureInfo));
+                    throw new ArgumentOutOfRangeException(nameof(textureDescriptor));
             }
+        }
+
+        public override void SetWrapMode(TextureWrapMode? textureWrapModeS = null, TextureWrapMode? textureWrapModeT = null, TextureWrapMode? textureWrapModeR = null)
+        {
+            base.SetWrapMode(textureWrapModeS, textureWrapModeT, textureWrapModeR);
+
+            renderer.glContext.BindTexture(GetTextureTarget(TextureType), Texture);
+            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureWrapS, (int)GetTextureWrap(TextureWrapModeS));
+            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureWrapT, (int)GetTextureWrap(TextureWrapModeT));
+            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureWrapR, (int)GetTextureWrap(TextureWrapModeR));
+
+            renderer.glContext.BindTexture(GetTextureTarget(TextureType), 0); //Unbind the texture.
+        }
+
+        public override void SetFilterMode(MinFilterMode? minFilterMode = null, MagFilterMode? magFilterMode = null)
+        {
+            base.SetFilterMode(minFilterMode, magFilterMode);
+
+            renderer.glContext.BindTexture(GetTextureTarget(TextureType), Texture);
+            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureMinFilter,
+                (int)GetTextureMinFilter(MinFilterMode));
+            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureMagFilter,
+                (int)GetTextureMagFilter(MagFilterMode));
+
+            renderer.glContext.BindTexture(GetTextureTarget(TextureType), 0); //Unbind the texture.
         }
 
         public override void Dispose()
@@ -218,6 +243,37 @@ namespace AvionEngine.OpenGL.Graphics
                 TextureType.Texture3D => TextureTarget.Texture3D,
                 TextureType.CubeMap => TextureTarget.TextureCubeMap,
                 _ => throw new ArgumentOutOfRangeException(nameof(textureType))
+            };
+        }
+
+        public static GLEnum GetTextureWrap(TextureWrapMode textureWrapMode)
+        {
+            return textureWrapMode switch
+            {
+                TextureWrapMode.Repeat => GLEnum.Repeat,
+                TextureWrapMode.Clamp => GLEnum.ClampToBorder,
+                TextureWrapMode.Mirror => GLEnum.MirroredRepeat,
+                _ => throw new ArgumentOutOfRangeException(nameof(textureWrapMode))
+            };
+        }
+
+        private static TextureMinFilter GetTextureMinFilter(MinFilterMode minFilterMode)
+        {
+            return minFilterMode switch
+            {
+                MinFilterMode.Linear => TextureMinFilter.Linear,
+                MinFilterMode.Nearest => TextureMinFilter.Nearest,
+                _ => throw new ArgumentOutOfRangeException(nameof(minFilterMode))
+            };
+        }
+
+        private static TextureMagFilter GetTextureMagFilter(MagFilterMode magFilterMode)
+        {
+            return magFilterMode switch
+            {
+                MagFilterMode.Linear => TextureMagFilter.Linear,
+                MagFilterMode.Nearest => TextureMagFilter.Nearest,
+                _ => throw new ArgumentOutOfRangeException(nameof(magFilterMode))
             };
         }
     }

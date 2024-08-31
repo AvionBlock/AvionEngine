@@ -5,11 +5,13 @@ namespace AvionEngine.Structures
     [AttributeUsage(AttributeTargets.Field)]
     public class VertexField : Attribute
     {
-        public FormatType FieldType;
+        public FormatType FormatType;
+        public InputType InputType;
 
-        public VertexField(FormatType fieldType)
+        public VertexField(FormatType formatType, InputType inputType)
         {
-            FieldType = fieldType;
+            FormatType = formatType;
+            InputType = inputType;
         }
     }
 }

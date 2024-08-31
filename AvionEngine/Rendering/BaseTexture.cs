@@ -1,6 +1,6 @@
-﻿using AvionEngine.Enums;
+﻿using AvionEngine.Descriptors;
+using AvionEngine.Enums;
 using AvionEngine.Interfaces;
-using AvionEngine.Structures;
 using System;
 
 namespace AvionEngine.Rendering
@@ -18,9 +18,9 @@ namespace AvionEngine.Rendering
 
         public abstract void Render(double delta);
 
-        public abstract void Update(TextureInfo textureData, TextureTargetMode? targetMode = null, FormatType? formatMode = null);
+        public abstract void Update(TextureDescriptor textureData, TextureTargetMode? targetMode = null, FormatType? formatMode = null);
 
-        public abstract void Update(TextureInfo[] textureData, TextureTargetMode? targetMode = null, FormatType? formatMode = null);
+        public abstract void Update(TextureDescriptor[] textureData, TextureTargetMode? targetMode = null, FormatType? formatMode = null);
 
         public abstract void UpdateWrapMode(WrapMode? wrapModeS = null, WrapMode? wrapModeT = null, WrapMode? wrapModeR = null);
 

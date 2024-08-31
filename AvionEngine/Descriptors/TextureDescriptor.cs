@@ -1,6 +1,6 @@
-﻿namespace AvionEngine.Structures
+﻿namespace AvionEngine.Descriptors
 {
-    public struct TextureInfo
+    public struct TextureDescriptor
     {
         public FormatType Format;
         public uint Width;

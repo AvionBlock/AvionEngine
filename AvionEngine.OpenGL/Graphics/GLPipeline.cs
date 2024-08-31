@@ -8,44 +8,71 @@ using System.Runtime.InteropServices;
 
 namespace AvionEngine.OpenGL.Graphics
 {
-    public class GLPipeline<TInput> : AVPipeline where TInput : unmanaged
+    public class GLPipeline : AVPipeline
     {
         public readonly Renderer renderer;
-
         public readonly uint ProgramPipeline;
+        public readonly uint VAO;
 
-        public unsafe GLPipeline(Renderer renderer)
+        public GLPipeline(Renderer renderer) : base()
         {
             this.renderer = renderer;
 
             ProgramPipeline = renderer.glContext.GenProgramPipeline();
-            var verticesFields = typeof(TInput).GetFields().Where(x => Attribute.IsDefined(x, typeof(VertexField))).ToArray();
 
+            VAO = renderer.glContext.CreateVertexArray();
+            renderer.glContext.BindVertexArray(VAO);
+
+            var verticesFields = typeof(TInput).GetFields().Where(x => Attribute.IsDefined(x, typeof(VertexField))).ToArray();
             for (uint i = 0; i < verticesFields.Length; i++)
             {
-                var fieldSize = verticesFields[i].FieldType.GetFields().Length;
-                if (fieldSize <= 0)
-                    fieldSize = 1;
-
+                var attribute = verticesFields[i].GetCustomAttribute<VertexField>();
                 renderer.glContext.EnableVertexAttribArray(i);
-                renderer.glContext.VertexAttribFormat(
-                    i,
-                    fieldSize,
-                    GetVertexAttribPointerType(verticesFields[i].GetCustomAttribute<VertexField>().FieldType),
-                    false,
-                    (uint)sizeof(TInput),
-                    (void*)Marshal.OffsetOf<TInput>(verticesFields[i].Name));
+
+                var offset = (uint)Marshal.OffsetOf<TInput>(verticesFields[i].Name);
+                var formatType = attribute.FormatType;
+                switch (formatType)
+                {
+                    case FormatType.R32_Float:
+                        renderer.glContext.VertexAttribFormat(i, 1, VertexAttribType.Float, false, offset);
+                        break;
+                    case FormatType.R32G32_Float:
+                        renderer.glContext.VertexAttribFormat(i, 2, VertexAttribType.Float, false, offset);
+                        break;
+                    case FormatType.R32G32B32_Float:
+                        renderer.glContext.VertexAttribFormat(i, 3, VertexAttribType.Float, false, offset);
+                        break;
+                    case FormatType.R32G32B32A32_Float:
+                        renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.Float, false, offset);
+                        break;
+                    case FormatType.R8G8B8A8_UNorm:
+                        renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.UnsignedByte, true, offset);
+                        break;
+                    case FormatType.R8G8B8A8_UNorm_SRGB:
+                        renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.UnsignedByte, true, offset);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(formatType));
+                }
+
+                renderer.glContext.VertexBindingDivisor(i, (uint)attribute.InputType);
+                renderer.glContext.VertexAttribBinding(i, 0);
             }
         }
 
-        public override void AddShader(AVShader shader)
+        public override void SetShader(AVShader shader)
         {
-            if (shader is GLShader glShader)
+            if(shader is GLShader glShader)
             {
-                var program = CreateProgram(renderer.glContext, glShader);
-                Shaders.Add(program); //Keep track of the program.
-                renderer.glContext.UseProgramStages(ProgramPipeline, GetProgramStageMask(glShader.ShaderStage), program);
+                renderer.glContext.UseProgramStages(ProgramPipeline, GetProgramStageMask(glShader.ShaderStage), glShader.ShaderProgram);
             }
+        }
+
+        public override void RemoveShader(ShaderStage shaderStage)
+        {
+            renderer.glContext.BindProgramPipeline(ProgramPipeline);
+            renderer.glContext.UseProgramStages(ProgramPipeline, GetProgramStageMask(shaderStage), 0);
+            renderer.glContext.BindProgramPipeline(0);
         }
 
         public override void Dispose()
@@ -76,113 +103,13 @@ namespace AvionEngine.OpenGL.Graphics
             return shaderStage switch
             {
                 ShaderStage.Vertex => UseProgramStageMask.VertexShaderBit,
+                ShaderStage.TessCtrl => UseProgramStageMask.TessControlShaderBit,
+                ShaderStage.TessEval => UseProgramStageMask.TessEvaluationShaderBit,
                 ShaderStage.Geometry => UseProgramStageMask.GeometryShaderBit,
                 ShaderStage.Pixel => UseProgramStageMask.FragmentShaderBit,
                 ShaderStage.Compute => UseProgramStageMask.ComputeShaderBit,
                 _ => throw new ArgumentOutOfRangeException(nameof(shaderStage)),
             };
-        }
-
-        public static void SetVertexAttribFormat(GL glInstance, uint index, FormatType formatType, uint offset)
-        {
-            switch (formatType)
-            {
-                case FormatType.B5G6R5_UNorm:
-                    glInstance.VertexAttribFormat(index, 3, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.B5G5R5A1_UNorm:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.R8_UNorm:
-                    glInstance.VertexAttribFormat(index, 1, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.R8_UInt:
-                    glInstance.VertexAttribFormat(index, 1, VertexAttribType.UnsignedInt, false, offset);
-                    break;
-                case FormatType.R8_SNorm:
-                    glInstance.VertexAttribFormat(index, 1, VertexAttribType.Int, true, offset);
-                    break;
-                case FormatType.R8_SInt:
-                    glInstance.VertexAttribFormat(index, 1, VertexAttribType.Int, false, offset);
-                    break;
-                case FormatType.A8_UNorm:
-                    glInstance.VertexAttribFormat(index, 1, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.R8G8_UNorm:
-                    glInstance.VertexAttribFormat(index, 2, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.R8G8_UInt:
-                    glInstance.VertexAttribFormat(index, 2, VertexAttribType.UnsignedInt, false, offset);
-                    break;
-                case FormatType.R8G8_SNorm:
-                    glInstance.VertexAttribFormat(index, 2, VertexAttribType.Int, true, offset);
-                    break;
-                case FormatType.R8G8_SInt:
-                    glInstance.VertexAttribFormat(index, 2, VertexAttribType.Int, false, offset);
-                    break;
-                case FormatType.R8G8B8A8_UNorm:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedByte, true, offset); //Dunno.
-                    //glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.R8G8B8A8_UNorm_SRGB:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.R8G8B8A8_UInt:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, false, offset);
-                    break;
-                case FormatType.R8G8B8A8_SNorm:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.Int, true, offset);
-                    break;
-                case FormatType.R8G8B8A8_SInt:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.Int, false, offset);
-                    break;
-                case FormatType.B8G8R8A8_UNorm:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.B8G8R8A8_UNorm_SRGB:
-                    throw new NotImplementedException(); //Not sure.
-                                                         //glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, true, offset);
-                                                         //break;
-                case FormatType.R10G10B10A2_UNorm:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, true, offset);
-                    break;
-                case FormatType.R10G10B10A2_UInt:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.UnsignedInt, false, offset);
-                    break;
-                case FormatType.R11G11B10_Float:
-                    throw new NotImplementedException(); //Not sure.
-                                                         //glInstance.VertexAttribFormat(index, 3, VertexAttribType.Float, false, offset);
-                                                         //break;
-
-                case FormatType.R32_Float:
-                    glInstance.VertexAttribFormat(index, 1, VertexAttribType.Float, false, offset);
-                    break;
-                case FormatType.R32G32_Float:
-                    glInstance.VertexAttribFormat(index, 2, VertexAttribType.Float, false, offset);
-                    break;
-                case FormatType.R32G32B32_Float:
-                    glInstance.VertexAttribFormat(index, 3, VertexAttribType.Float, false, offset);
-                    break;
-                case FormatType.R32G32B32A32_Float:
-                    glInstance.VertexAttribFormat(index, 4, VertexAttribType.Float, false, offset);
-                    break;
-            }
-        }
-
-        private static uint CreateProgram(GL glInstance, GLShader glShader)
-        {
-            uint program = glInstance.CreateProgram();
-            glInstance.AttachShader(program, glShader.Shader);
-            glInstance.ProgramParameter(program, ProgramParameterPName.Separable, (int)GLEnum.True);
-
-            glInstance.LinkProgram(program);
-            glInstance.GetProgram(program, ProgramPropertyARB.LinkStatus, out int status);
-            if (status != (int)GLEnum.True)
-                throw new Exception($"Failed to link program: {glInstance.GetProgramInfoLog(program)}");
-
-            glInstance.DetachShader(program, glShader.Shader);
-
-            return program;
         }
     }
 }

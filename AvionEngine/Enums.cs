@@ -15,15 +15,22 @@
         Stream
     }
 
-    public enum BufferDrawMode
+    public enum PrimitiveMode
     {
-        Lines,
-        LineLoop,
+        PointList,
+
+        LineList,
         LineStrip,
-        Triangles,
+
+        LineListAdjacency,
+        LineStripAdjacency,
+
+        TriangleList,
         TriangleStrip,
         TriangleFan,
-        Quads
+
+        TriangleListAdjacency,
+        TriangleStripAdjacency
     }
 
     //https://github.com/Aquatic-Games/grabs/blob/main/src/grabs.Graphics/Format.cs#L3
@@ -115,15 +122,23 @@
         BC7_UNorm,
         BC7_UNorm_SRGB
     }
+
+    public enum InputType
+    {
+        PerVertex,
+        PerInstance
+    }
     #endregion
 
     #region Shader Enums
     public enum ShaderStage
     {
         Vertex,
+        TessCtrl,
+        TessEval,
         Geometry,
         Pixel,
-        Compute
+        Compute,
     }
     #endregion
 
@@ -138,19 +153,31 @@
 
     public enum TextureWrapMode
     {
-        Repeat
+        Repeat,
+        Clamp,
+        Mirror,
     }
 
     public enum MagFilterMode
     {
-        Linear,
-        Nearest
+        None,
+        Nearest,
+        Linear
     }
 
     public enum MinFilterMode
     {
-        Linear,
-        Nearest
+        None,
+        Nearest,
+        Linear
+    }
+    #endregion
+
+    #region Misc
+    public enum CommandType
+    {
+        Action,
+        Render
     }
     #endregion
 }

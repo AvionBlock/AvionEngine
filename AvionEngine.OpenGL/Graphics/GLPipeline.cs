@@ -7,7 +7,7 @@ namespace AvionEngine.OpenGL.Graphics
 {
     public class GLPipeline : AVPipeline
     {
-        public readonly GLRenderer renderer;
+        public readonly GLRenderer Renderer;
         public readonly uint ProgramPipeline;
 
         public uint VAO;
@@ -29,7 +29,7 @@ namespace AvionEngine.OpenGL.Graphics
             AVShader[]? fragmentShaders = null,
             AVShader[]? computeShaders = null) : base(primitiveMode)
         {
-            this.renderer = renderer;
+            Renderer = renderer;
             ProgramPipeline = renderer.glContext.GenProgramPipeline();
 
             SetVertexStage(vertexShaders);
@@ -42,51 +42,51 @@ namespace AvionEngine.OpenGL.Graphics
 
         public override void SetLayoutDescriptors(in InputLayoutDescriptor[] inputLayoutDescriptors)
         {
-            VAO = renderer.glContext.CreateVertexArray();
-            renderer.glContext.BindVertexArray(VAO);
+            VAO = Renderer.glContext.CreateVertexArray();
+            Renderer.glContext.BindVertexArray(VAO);
 
             for (uint i = 0; i < inputLayoutDescriptors.Length; i++)
             {
-                renderer.glContext.EnableVertexAttribArray(i);
+                Renderer.glContext.EnableVertexAttribArray(i);
                 var descriptor = inputLayoutDescriptors[i];
                 switch (descriptor.FormatType)
                 {
                     case FormatType.R32_Float:
-                        renderer.glContext.VertexAttribFormat(i, 1, VertexAttribType.Float, false, descriptor.Offset);
+                        Renderer.glContext.VertexAttribFormat(i, 1, VertexAttribType.Float, false, descriptor.Offset);
                         break;
                     case FormatType.R32G32_Float:
-                        renderer.glContext.VertexAttribFormat(i, 2, VertexAttribType.Float, false, descriptor.Offset);
+                        Renderer.glContext.VertexAttribFormat(i, 2, VertexAttribType.Float, false, descriptor.Offset);
                         break;
                     case FormatType.R32G32B32_Float:
-                        renderer.glContext.VertexAttribFormat(i, 3, VertexAttribType.Float, false, descriptor.Offset);
+                        Renderer.glContext.VertexAttribFormat(i, 3, VertexAttribType.Float, false, descriptor.Offset);
                         break;
                     case FormatType.R32G32B32A32_Float:
-                        renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.Float, false, descriptor.Offset);
+                        Renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.Float, false, descriptor.Offset);
                         break;
                     case FormatType.R8G8B8A8_UNorm:
-                        renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.UnsignedByte, true, descriptor.Offset);
+                        Renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.UnsignedByte, true, descriptor.Offset);
                         break;
                     case FormatType.R8G8B8A8_UNorm_SRGB:
-                        renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.UnsignedByte, true, descriptor.Offset);
+                        Renderer.glContext.VertexAttribFormat(i, 4, VertexAttribType.UnsignedByte, true, descriptor.Offset);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(descriptor.FormatType));
                 }
 
-                renderer.glContext.VertexBindingDivisor(i, (uint)descriptor.InputType);
-                renderer.glContext.VertexAttribBinding(i, 0);
+                Renderer.glContext.VertexBindingDivisor(i, (uint)descriptor.InputType);
+                Renderer.glContext.VertexAttribBinding(i, 0);
             }
 
             //Unbind for safety.
-            renderer.glContext.BindVertexArray(0);
+            Renderer.glContext.BindVertexArray(0);
         }
 
         public override void SetVertexStage(AVShader[]? shaders = null)
         {
             if (shaders == null && VertexProgram != 0)
             {
-                renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.VertexShaderBit, 0);
-                renderer.glContext.DeleteProgram(VertexProgram);
+                Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.VertexShaderBit, 0);
+                Renderer.glContext.DeleteProgram(VertexProgram);
                 VertexProgram = 0;
                 return;
             }
@@ -96,11 +96,11 @@ namespace AvionEngine.OpenGL.Graphics
             var glShaders = (GLShader[])shaders;
             if (glShaders == null)
                 throw new ArgumentException($"Shaders must be of type {nameof(GLShader)}.");
-            var program = CreateShaderProgram(renderer.glContext, ShaderStage.Vertex, glShaders);
+            var program = CreateShaderProgram(Renderer.glContext, ShaderStage.Vertex, glShaders);
 
-            renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.VertexShaderBit, program);
+            Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.VertexShaderBit, program);
             if (VertexProgram != 0)
-                renderer.glContext.DeleteProgram(VertexProgram);
+                Renderer.glContext.DeleteProgram(VertexProgram);
             VertexProgram = program;
         }
 
@@ -108,8 +108,8 @@ namespace AvionEngine.OpenGL.Graphics
         {
             if (shaders == null && TessCtrlProgram != 0)
             {
-                renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessControlShaderBit, 0);
-                renderer.glContext.DeleteProgram(TessCtrlProgram);
+                Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessControlShaderBit, 0);
+                Renderer.glContext.DeleteProgram(TessCtrlProgram);
                 TessCtrlProgram = 0;
                 return;
             }
@@ -119,11 +119,11 @@ namespace AvionEngine.OpenGL.Graphics
             var glShaders = (GLShader[])shaders;
             if (glShaders == null)
                 throw new ArgumentException($"Shaders must be of type {nameof(GLShader)}.");
-            var program = CreateShaderProgram(renderer.glContext, ShaderStage.TessCtrl, glShaders);
+            var program = CreateShaderProgram(Renderer.glContext, ShaderStage.TessCtrl, glShaders);
 
-            renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessControlShaderBit, program);
+            Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessControlShaderBit, program);
             if (TessCtrlProgram != 0)
-                renderer.glContext.DeleteProgram(TessCtrlProgram);
+                Renderer.glContext.DeleteProgram(TessCtrlProgram);
             TessCtrlProgram = program;
         }
 
@@ -131,8 +131,8 @@ namespace AvionEngine.OpenGL.Graphics
         {
             if (shaders == null && TessEvalProgram != 0)
             {
-                renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessEvaluationShaderBit, 0);
-                renderer.glContext.DeleteProgram(TessEvalProgram);
+                Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessEvaluationShaderBit, 0);
+                Renderer.glContext.DeleteProgram(TessEvalProgram);
                 TessEvalProgram = 0;
                 return;
             }
@@ -142,11 +142,11 @@ namespace AvionEngine.OpenGL.Graphics
             var glShaders = (GLShader[])shaders;
             if (glShaders == null)
                 throw new ArgumentException($"Shaders must be of type {nameof(GLShader)}.");
-            var program = CreateShaderProgram(renderer.glContext, ShaderStage.TessEval, glShaders);
+            var program = CreateShaderProgram(Renderer.glContext, ShaderStage.TessEval, glShaders);
 
-            renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessEvaluationShaderBit, program);
+            Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.TessEvaluationShaderBit, program);
             if (TessEvalProgram != 0)
-                renderer.glContext.DeleteProgram(TessEvalProgram);
+                Renderer.glContext.DeleteProgram(TessEvalProgram);
             TessEvalProgram = program;
         }
 
@@ -154,8 +154,8 @@ namespace AvionEngine.OpenGL.Graphics
         {
             if (shaders == null && GeometryProgram != 0)
             {
-                renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.GeometryShaderBit, 0);
-                renderer.glContext.DeleteProgram(GeometryProgram);
+                Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.GeometryShaderBit, 0);
+                Renderer.glContext.DeleteProgram(GeometryProgram);
                 GeometryProgram = 0;
                 return;
             }
@@ -165,11 +165,11 @@ namespace AvionEngine.OpenGL.Graphics
             var glShaders = (GLShader[])shaders;
             if (glShaders == null)
                 throw new ArgumentException($"Shaders must be of type {nameof(GLShader)}.");
-            var program = CreateShaderProgram(renderer.glContext, ShaderStage.Geometry, glShaders);
+            var program = CreateShaderProgram(Renderer.glContext, ShaderStage.Geometry, glShaders);
 
-            renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.GeometryShaderBit, program);
+            Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.GeometryShaderBit, program);
             if (GeometryProgram != 0)
-                renderer.glContext.DeleteProgram(GeometryProgram);
+                Renderer.glContext.DeleteProgram(GeometryProgram);
             GeometryProgram = program;
         }
 
@@ -177,8 +177,8 @@ namespace AvionEngine.OpenGL.Graphics
         {
             if (shaders == null && FragmentProgram != 0)
             {
-                renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.FragmentShaderBit, 0);
-                renderer.glContext.DeleteProgram(FragmentProgram);
+                Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.FragmentShaderBit, 0);
+                Renderer.glContext.DeleteProgram(FragmentProgram);
                 FragmentProgram = 0;
                 return;
             }
@@ -188,11 +188,11 @@ namespace AvionEngine.OpenGL.Graphics
             var glShaders = (GLShader[])shaders;
             if (glShaders == null)
                 throw new ArgumentException($"Shaders must be of type {nameof(GLShader)}.");
-            var program = CreateShaderProgram(renderer.glContext, ShaderStage.Pixel, glShaders);
+            var program = CreateShaderProgram(Renderer.glContext, ShaderStage.Pixel, glShaders);
 
-            renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.FragmentShaderBit, program);
+            Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.FragmentShaderBit, program);
             if (FragmentProgram != 0)
-                renderer.glContext.DeleteProgram(FragmentProgram);
+                Renderer.glContext.DeleteProgram(FragmentProgram);
             FragmentProgram = program;
         }
 
@@ -200,8 +200,8 @@ namespace AvionEngine.OpenGL.Graphics
         {
             if (shaders == null && ComputeProgram != 0)
             {
-                renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.ComputeShaderBit, 0);
-                renderer.glContext.DeleteProgram(ComputeProgram);
+                Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.ComputeShaderBit, 0);
+                Renderer.glContext.DeleteProgram(ComputeProgram);
                 ComputeProgram = 0;
                 return;
             }
@@ -211,11 +211,11 @@ namespace AvionEngine.OpenGL.Graphics
             var glShaders = (GLShader[])shaders;
             if (glShaders == null)
                 throw new ArgumentException($"Shaders must be of type {nameof(GLShader)}.");
-            var program = CreateShaderProgram(renderer.glContext, ShaderStage.Compute, glShaders);
+            var program = CreateShaderProgram(Renderer.glContext, ShaderStage.Compute, glShaders);
 
-            renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.ComputeShaderBit, program);
+            Renderer.glContext.UseProgramStages(ProgramPipeline, UseProgramStageMask.ComputeShaderBit, program);
             if (ComputeProgram != 0)
-                renderer.glContext.DeleteProgram(ComputeProgram);
+                Renderer.glContext.DeleteProgram(ComputeProgram);
             ComputeProgram = program;
         }
 
@@ -231,7 +231,7 @@ namespace AvionEngine.OpenGL.Graphics
 
             if (disposing)
             {
-                renderer.glContext.DeleteProgramPipeline(ProgramPipeline);
+                Renderer.glContext.DeleteProgramPipeline(ProgramPipeline);
             }
 
             IsDisposed = true;

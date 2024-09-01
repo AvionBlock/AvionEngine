@@ -154,21 +154,14 @@
     public enum TextureWrapMode
     {
         Repeat,
-        Clamp,
-        Mirror,
+        RepeatMirrored,
+        ClampToEdge,
+        ClampToBorder,
     }
 
-    public enum MagFilterMode
+    public enum TextureFilterMode
     {
-        None,
-        Nearest,
-        Linear
-    }
-
-    public enum MinFilterMode
-    {
-        None,
-        Nearest,
+        Point,
         Linear
     }
     #endregion

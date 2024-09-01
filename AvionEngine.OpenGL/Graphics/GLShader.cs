@@ -6,13 +6,13 @@ namespace AvionEngine.OpenGL.Graphics
 {
     public class GLShader : AVShader
     {
-        public readonly GLRenderer renderer;
+        public readonly GLRenderer Renderer;
 
         public readonly uint Shader;
 
         public GLShader(GLRenderer renderer, string shaderCode, ShaderStage shaderStage) : base(shaderStage)
         {
-            this.renderer = renderer;
+            Renderer = renderer;
 
             Shader = renderer.glContext.CreateShader(GetShaderType(shaderStage));
 
@@ -32,7 +32,7 @@ namespace AvionEngine.OpenGL.Graphics
 
             if (disposing)
             {
-                renderer.glContext.DeleteShader(Shader);
+                Renderer.glContext.DeleteShader(Shader);
             }
 
             IsDisposed = true;

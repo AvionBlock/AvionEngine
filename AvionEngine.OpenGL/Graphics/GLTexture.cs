@@ -7,7 +7,7 @@ namespace AvionEngine.OpenGL.Graphics
 {
     public class GLTexture : AVTexture
     {
-        public readonly GLRenderer renderer;
+        public readonly GLRenderer Renderer;
 
         public readonly uint Texture;
         public readonly SizedInternalFormat InternalFormat;
@@ -16,7 +16,7 @@ namespace AvionEngine.OpenGL.Graphics
 
         public GLTexture(GLRenderer renderer, TextureType textureType, TextureDescriptor textureDescriptor) : base(textureType, textureDescriptor.Format)
         {
-            this.renderer = renderer;
+            Renderer = renderer;
 
             (InternalFormat, PixelFormat, PixelType) = GetTextureFormat(textureDescriptor.Format);
 
@@ -27,65 +27,65 @@ namespace AvionEngine.OpenGL.Graphics
         public override unsafe void Update(TextureDescriptor textureDescriptor)
         {
             var isCompressed = FormatIsCompressed(textureDescriptor.Format);
-            renderer.glContext.BindTexture(GetTextureTarget(TextureType), Texture);
+            Bind();
             switch (TextureType)
             {
                 case TextureType.Texture1D:
-                    renderer.glContext.TexStorage1D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width);
+                    Renderer.glContext.TexStorage1D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width);
 
                     fixed (void* dataPtr = textureDescriptor.Data[0])
                     {
                         if (isCompressed)
                         {
-                            renderer.glContext.CompressedTexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                            Renderer.glContext.CompressedTexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
-                            renderer.glContext.TexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, PixelFormat, PixelType, dataPtr);
+                            Renderer.glContext.TexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, PixelFormat, PixelType, dataPtr);
                         }
                     }
 
                     if (textureDescriptor.MipLevels == 0)
-                        renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
+                        Renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     break;
                 case TextureType.Texture2D:
-                    renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height);
+                    Renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height);
 
                     fixed (void* dataPtr = textureDescriptor.Data[0])
                     {
                         if (isCompressed)
                         {
-                            renderer.glContext.CompressedTexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                            Renderer.glContext.CompressedTexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
-                            renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, PixelFormat, PixelType, dataPtr);
+                            Renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, PixelFormat, PixelType, dataPtr);
                         }
                     }
 
                     if (textureDescriptor.MipLevels == 0)
-                        renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
+                        Renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     break;
                 case TextureType.Texture3D:
-                    renderer.glContext.TexStorage3D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth);
+                    Renderer.glContext.TexStorage3D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth);
 
                     fixed (void* dataPtr = textureDescriptor.Data[0])
                     {
                         if (isCompressed)
                         {
-                            renderer.glContext.CompressedTexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                            Renderer.glContext.CompressedTexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
-                            renderer.glContext.TexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, PixelFormat, PixelType, dataPtr);
+                            Renderer.glContext.TexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, PixelFormat, PixelType, dataPtr);
                         }
                     }
 
                     if (textureDescriptor.MipLevels == 0)
-                        renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
+                        Renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     break;
                 case TextureType.CubeMap:
-                    renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height);
+                    Renderer.glContext.TexStorage2D(GetTextureTarget(TextureType), textureDescriptor.MipLevels, InternalFormat, textureDescriptor.Width, textureDescriptor.Height);
 
                     for (int a = 0; a < 6; a++)
                     {
@@ -94,47 +94,34 @@ namespace AvionEngine.OpenGL.Graphics
                         {
                             if (isCompressed)
                             {
-                                renderer.glContext.CompressedTexSubImage2D(target, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                                Renderer.glContext.CompressedTexSubImage2D(target, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                             }
                             else
                             {
-                                renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, PixelFormat, PixelType, dataPtr);
+                                Renderer.glContext.TexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, PixelFormat, PixelType, dataPtr);
                             }
                         }
 
                         if (textureDescriptor.MipLevels == 0)
-                            renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
+                            Renderer.glContext.GenerateMipmap(GetTextureTarget(TextureType));
                     }
                     break;
 
                 default:
                     throw new NotSupportedException($"{textureDescriptor.Format} is not supported!");
             }
+
+            Unbind();
         }
 
-        public override void SetWrapMode(TextureWrapMode? textureWrapModeS = null, TextureWrapMode? textureWrapModeT = null, TextureWrapMode? textureWrapModeR = null)
+        public void Bind()
         {
-            base.SetWrapMode(textureWrapModeS, textureWrapModeT, textureWrapModeR);
-
-            renderer.glContext.BindTexture(GetTextureTarget(TextureType), Texture);
-            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureWrapS, (int)GetTextureWrap(TextureWrapModeS));
-            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureWrapT, (int)GetTextureWrap(TextureWrapModeT));
-            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureWrapR, (int)GetTextureWrap(TextureWrapModeR));
-
-            renderer.glContext.BindTexture(GetTextureTarget(TextureType), 0); //Unbind the texture.
+            Renderer.glContext.BindTexture(GetTextureTarget(TextureType), Texture);
         }
 
-        public override void SetFilterMode(MinFilterMode? minFilterMode = null, MagFilterMode? magFilterMode = null)
+        public void Unbind()
         {
-            base.SetFilterMode(minFilterMode, magFilterMode);
-
-            renderer.glContext.BindTexture(GetTextureTarget(TextureType), Texture);
-            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureMinFilter,
-                (int)GetTextureMinFilter(MinFilterMode));
-            renderer.glContext.TextureParameter(Texture, TextureParameterName.TextureMagFilter,
-                (int)GetTextureMagFilter(MagFilterMode));
-
-            renderer.glContext.BindTexture(GetTextureTarget(TextureType), 0); //Unbind the texture.
+            Renderer.glContext.BindTexture(GetTextureTarget(TextureType), 0);
         }
 
         public override void Dispose()
@@ -149,7 +136,7 @@ namespace AvionEngine.OpenGL.Graphics
 
             if (disposing)
             {
-                renderer.glContext.DeleteTexture(Texture);
+                Renderer.glContext.DeleteTexture(Texture);
             }
 
             IsDisposed = true;

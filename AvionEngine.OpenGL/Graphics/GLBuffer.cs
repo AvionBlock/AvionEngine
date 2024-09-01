@@ -6,29 +6,29 @@ namespace AvionEngine.OpenGL.Graphics
 {
     public class GLBuffer : AVBuffer
     {
-        public readonly GLRenderer renderer;
+        public readonly GLRenderer Renderer;
 
         public readonly uint Buffer;
 
         public unsafe GLBuffer(GLRenderer renderer, BufferType bufferType, BufferUsageMode bufferUsageMode, uint sizeInBytes, void* data) : base(bufferType, bufferUsageMode)
         {
-            this.renderer = renderer;
+            Renderer = renderer;
             Buffer = renderer.glContext.GenBuffer();
-            renderer.glContext.BindBuffer(GetBufferTargetARB(bufferType), Buffer);
+            Bind();
             renderer.glContext.BufferData(GetBufferTargetARB(bufferType), (UIntPtr)sizeInBytes, data, GetBufferUsageARB(BufferUsageMode));
 
             //Unbind to be safe.
-            renderer.glContext.BindBuffer(GetBufferTargetARB(bufferType), 0);
+            Unbind();
         }
 
         public void Bind()
         {
-            renderer.glContext.BindBuffer(GetBufferTargetARB(BufferType), Buffer);
+            Renderer.glContext.BindBuffer(GetBufferTargetARB(BufferType), Buffer);
         }
 
         public void Unbind()
         {
-            renderer.glContext.BindBuffer(GetBufferTargetARB(BufferType), 0);
+            Renderer.glContext.BindBuffer(GetBufferTargetARB(BufferType), 0);
         }
 
         public override void Dispose()
@@ -43,7 +43,7 @@ namespace AvionEngine.OpenGL.Graphics
 
             if (disposing)
             {
-                renderer.glContext.DeleteBuffer(Buffer);
+                Renderer.glContext.DeleteBuffer(Buffer);
             }
 
             IsDisposed = true;

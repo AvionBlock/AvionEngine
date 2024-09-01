@@ -11,28 +11,37 @@ namespace AvionEngine.OpenGL.Graphics
         public readonly uint Sampler;
 
         public unsafe GLSampler(
-            GLRenderer renderer, 
+            GLRenderer renderer,
             TextureFilterMode textureMinFilterMode,
             TextureFilterMode textureMagFilterMode,
             TextureFilterMode textureMipFilterMode,
             TextureWrapMode textureWrapModeS,
             TextureWrapMode textureWrapModeT,
             TextureWrapMode textureWrapModeR,
-            Vector4 borderColor) : base(
+            ComparisonFunction comparisonFunction,
+            Vector4 borderColor,
+            float mipLodBias,
+            float minLod,
+            float maxLod) : base(
                 textureMinFilterMode,
                 textureMagFilterMode,
                 textureMipFilterMode,
                 textureWrapModeS,
                 textureWrapModeT,
                 textureWrapModeR,
-                borderColor)
+                comparisonFunction,
+                borderColor,
+                mipLodBias,
+                minLod,
+                maxLod)
         {
             Renderer = renderer;
 
             Sampler = renderer.glContext.CreateSampler();
-            SetFilter(null, null, null);
-            SetWrap(null, null, null);
-            SetBorderColor(null);
+            SetFilter();
+            SetWrap();
+            SetBorderColor();
+            SetLod();
         }
 
         public override void SetFilter(TextureFilterMode? textureMinFilterMode = null, TextureFilterMode? textureMagFilterMode = null, TextureFilterMode? textureMipFilterMode = null)
@@ -58,9 +67,43 @@ namespace AvionEngine.OpenGL.Graphics
             Renderer.glContext.SamplerParameter(Sampler, SamplerParameterF.BorderColor, &bColor.X);
         }
 
+        public override void SetCompare(ComparisonFunction? comparisonFunction = null)
+        {
+            base.SetCompare(comparisonFunction);
+
+            Renderer.glContext.SamplerParameter(Sampler, SamplerParameterI.CompareFunc, (int)GetDepthFunction(ComparisonFunction));
+        }
+
+        public override void SetLod(float? mipLodBias = null, float? minLod = null, float? maxLod = null)
+        {
+            base.SetLod(mipLodBias, minLod, maxLod);
+
+            Renderer.glContext.SamplerParameter(Sampler, SamplerParameterF.LodBias, MipLodBias);
+            Renderer.glContext.SamplerParameter(Sampler, SamplerParameterF.MinLod, MinLod);
+            Renderer.glContext.SamplerParameter(Sampler, SamplerParameterF.MaxLod, MaxLod);
+        }
+
         public override void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (IsDisposed) return;
+
+            if (disposing)
+            {
+                Renderer.glContext.DeleteSampler(Sampler);
+            }
+
+            IsDisposed = true;
+        }
+
+        ~GLSampler()
+        {
+            Dispose(false);
         }
 
         public static TextureMinFilter GetTextureMinFilter(TextureFilterMode textureMinFilterMode, TextureFilterMode textureMipFilterMode)
@@ -94,6 +137,22 @@ namespace AvionEngine.OpenGL.Graphics
                 TextureWrapMode.ClampToEdge => Silk.NET.OpenGL.TextureWrapMode.ClampToEdge,
                 TextureWrapMode.ClampToBorder => Silk.NET.OpenGL.TextureWrapMode.ClampToBorder,
                 _ => throw new ArgumentOutOfRangeException(nameof(textureWrapMode))
+            };
+        }
+
+        public static DepthFunction GetDepthFunction(ComparisonFunction comparisonMode)
+        {
+            return comparisonMode switch
+            {
+                ComparisonFunction.Never => DepthFunction.Never,
+                ComparisonFunction.Less => DepthFunction.Less,
+                ComparisonFunction.Equal => DepthFunction.Equal,
+                ComparisonFunction.LessEqual => DepthFunction.Lequal,
+                ComparisonFunction.Greater => DepthFunction.Greater,
+                ComparisonFunction.NotEqual => DepthFunction.Notequal,
+                ComparisonFunction.GreaterEqual => DepthFunction.Gequal,
+                ComparisonFunction.Always => DepthFunction.Always,
+                _ => throw new ArgumentOutOfRangeException()
             };
         }
     }

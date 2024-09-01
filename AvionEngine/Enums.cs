@@ -167,6 +167,18 @@
     #endregion
 
     #region Misc
+    public enum ComparisonFunction
+    {
+        Never,
+        Less,
+        Equal,
+        LessEqual,
+        Greater,
+        NotEqual,
+        GreaterEqual,
+        Always
+    }
+
     public enum CommandType
     {
         Action,

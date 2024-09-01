@@ -14,11 +14,11 @@ namespace AvionEngine.OpenGL.Graphics
         public readonly PixelFormat PixelFormat;
         public readonly PixelType PixelType;
 
-        public GLTexture(GLRenderer renderer, TextureType textureType, TextureDescriptor textureDescriptor) : base(textureType, textureDescriptor.Format)
+        public GLTexture(GLRenderer renderer, TextureType textureType, TextureDescriptor textureDescriptor) : base(textureType, textureDescriptor.FormatType)
         {
             Renderer = renderer;
 
-            (InternalFormat, PixelFormat, PixelType) = GetTextureFormat(textureDescriptor.Format);
+            (InternalFormat, PixelFormat, PixelType) = GetTextureFormat(textureDescriptor.FormatType);
 
             Texture = renderer.glContext.GenTexture();
             Update(textureDescriptor);
@@ -26,7 +26,7 @@ namespace AvionEngine.OpenGL.Graphics
 
         public override unsafe void Update(TextureDescriptor textureDescriptor)
         {
-            var isCompressed = FormatIsCompressed(textureDescriptor.Format);
+            var isCompressed = FormatIsCompressed(textureDescriptor.FormatType);
             Bind();
             switch (TextureType)
             {
@@ -37,7 +37,7 @@ namespace AvionEngine.OpenGL.Graphics
                     {
                         if (isCompressed)
                         {
-                            Renderer.glContext.CompressedTexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                            Renderer.glContext.CompressedTexSubImage1D(GetTextureTarget(TextureType), 0, 0, textureDescriptor.Width, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.FormatType, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
@@ -55,7 +55,7 @@ namespace AvionEngine.OpenGL.Graphics
                     {
                         if (isCompressed)
                         {
-                            Renderer.glContext.CompressedTexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                            Renderer.glContext.CompressedTexSubImage2D(GetTextureTarget(TextureType), 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.FormatType, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
@@ -73,7 +73,7 @@ namespace AvionEngine.OpenGL.Graphics
                     {
                         if (isCompressed)
                         {
-                            Renderer.glContext.CompressedTexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                            Renderer.glContext.CompressedTexSubImage3D(GetTextureTarget(TextureType), 0, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, textureDescriptor.Depth, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.FormatType, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                         }
                         else
                         {
@@ -94,7 +94,7 @@ namespace AvionEngine.OpenGL.Graphics
                         {
                             if (isCompressed)
                             {
-                                Renderer.glContext.CompressedTexSubImage2D(target, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.Format, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
+                                Renderer.glContext.CompressedTexSubImage2D(target, 0, 0, 0, textureDescriptor.Width, textureDescriptor.Height, (InternalFormat)InternalFormat, CalculateTextureSizeInBytes(textureDescriptor.FormatType, textureDescriptor.Width, textureDescriptor.Height), dataPtr);
                             }
                             else
                             {
@@ -108,7 +108,7 @@ namespace AvionEngine.OpenGL.Graphics
                     break;
 
                 default:
-                    throw new NotSupportedException($"{textureDescriptor.Format} is not supported!");
+                    throw new NotSupportedException($"{textureDescriptor.FormatType} is not supported!");
             }
 
             Unbind();

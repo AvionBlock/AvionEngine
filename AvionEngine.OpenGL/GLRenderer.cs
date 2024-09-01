@@ -27,6 +27,7 @@ namespace AvionEngine.OpenGL
                         actionCommand.Action.Invoke();
                         break;
                     case CommandType.BeginRender:
+                        //TODO!
                         break;
                     case CommandType.EndRender:
                         break;

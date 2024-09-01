@@ -232,36 +232,5 @@ namespace AvionEngine.OpenGL.Graphics
                 _ => throw new ArgumentOutOfRangeException(nameof(textureType))
             };
         }
-
-        public static GLEnum GetTextureWrap(TextureWrapMode textureWrapMode)
-        {
-            return textureWrapMode switch
-            {
-                TextureWrapMode.Repeat => GLEnum.Repeat,
-                TextureWrapMode.Clamp => GLEnum.ClampToBorder,
-                TextureWrapMode.Mirror => GLEnum.MirroredRepeat,
-                _ => throw new ArgumentOutOfRangeException(nameof(textureWrapMode))
-            };
-        }
-
-        private static TextureMinFilter GetTextureMinFilter(MinFilterMode minFilterMode)
-        {
-            return minFilterMode switch
-            {
-                MinFilterMode.Linear => TextureMinFilter.Linear,
-                MinFilterMode.Nearest => TextureMinFilter.Nearest,
-                _ => throw new ArgumentOutOfRangeException(nameof(minFilterMode))
-            };
-        }
-
-        private static TextureMagFilter GetTextureMagFilter(MagFilterMode magFilterMode)
-        {
-            return magFilterMode switch
-            {
-                MagFilterMode.Linear => TextureMagFilter.Linear,
-                MagFilterMode.Nearest => TextureMagFilter.Nearest,
-                _ => throw new ArgumentOutOfRangeException(nameof(magFilterMode))
-            };
-        }
     }
 }

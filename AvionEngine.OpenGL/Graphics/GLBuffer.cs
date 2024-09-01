@@ -6,14 +6,29 @@ namespace AvionEngine.OpenGL.Graphics
 {
     public class GLBuffer : AVBuffer
     {
-        public readonly Renderer renderer;
+        public readonly GLRenderer renderer;
 
         public readonly uint Buffer;
 
-        public GLBuffer(Renderer renderer, BufferType bufferType) : base(bufferType)
+        public unsafe GLBuffer(GLRenderer renderer, BufferType bufferType, BufferUsageMode bufferUsageMode, uint sizeInBytes, void* data) : base(bufferType, bufferUsageMode)
         {
             this.renderer = renderer;
             Buffer = renderer.glContext.GenBuffer();
+            renderer.glContext.BindBuffer(GetBufferTargetARB(bufferType), Buffer);
+            renderer.glContext.BufferData(GetBufferTargetARB(bufferType), (UIntPtr)sizeInBytes, data, GetBufferUsageARB(BufferUsageMode));
+
+            //Unbind to be safe.
+            renderer.glContext.BindBuffer(GetBufferTargetARB(bufferType), 0);
+        }
+
+        public void Bind()
+        {
+            renderer.glContext.BindBuffer(GetBufferTargetARB(BufferType), Buffer);
+        }
+
+        public void Unbind()
+        {
+            renderer.glContext.BindBuffer(GetBufferTargetARB(BufferType), 0);
         }
 
         public override void Dispose()

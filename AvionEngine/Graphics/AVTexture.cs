@@ -1,6 +1,4 @@
 ﻿using AvionEngine.Descriptors;
-using AvionEngine.Interfaces;
-using Silk.NET.SDL;
 using System;
 using System.Runtime.CompilerServices;
 
@@ -29,11 +27,9 @@ namespace AvionEngine.Graphics
         {
             TextureType = textureType;
             FormatType = formatType;
-            TextureWrapModeS = textureWrapModeS;
-            TextureWrapModeT = textureWrapModeT;
-            TextureWrapModeR = textureWrapModeR;
-            MinFilterMode = minFilterMode;
-            MagFilterMode = magFilterMode;
+
+            SetWrapMode(textureWrapModeS, textureWrapModeT, textureWrapModeR);
+            SetFilterMode(minFilterMode, magFilterMode);
         }
 
         public abstract void Update(TextureDescriptor textureInfo);

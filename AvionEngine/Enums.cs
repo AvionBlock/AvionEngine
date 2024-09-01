@@ -177,7 +177,19 @@
     public enum CommandType
     {
         Action,
-        Render
+        BeginRender,
+        EndRender,
+
+        //Buffer Stuff.
+        UpdateBuffer,
+        SetBuffer,
+        DeleteBuffer,
+
+        //Drawing
+        SetViewport,
+        Draw,
+        DrawIndexed,
+        DrawIndexedBaseVertex,
     }
     #endregion
 }

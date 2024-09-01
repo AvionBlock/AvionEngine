@@ -4,6 +4,6 @@ namespace AvionEngine.Commands
 {
     public struct RenderCommand : ICommandAction
     {
-        public CommandType CommmandType => CommandType.Render;
+        public CommandType CommmandType => CommandType.BeginRender;
     }
 }

@@ -7,14 +7,14 @@ namespace AvionEngine.OpenGL.Graphics
 {
     public class GLTexture : AVTexture
     {
-        public readonly Renderer renderer;
+        public readonly GLRenderer renderer;
 
         public readonly uint Texture;
         public readonly SizedInternalFormat InternalFormat;
         public readonly PixelFormat PixelFormat;
         public readonly PixelType PixelType;
 
-        public GLTexture(Renderer renderer, TextureType textureType, TextureDescriptor textureDescriptor) : base(textureType, textureDescriptor.Format)
+        public GLTexture(GLRenderer renderer, TextureType textureType, TextureDescriptor textureDescriptor) : base(textureType, textureDescriptor.Format)
         {
             this.renderer = renderer;
 
@@ -108,7 +108,7 @@ namespace AvionEngine.OpenGL.Graphics
                     break;
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(textureDescriptor));
+                    throw new NotSupportedException($"{textureDescriptor.Format} is not supported!");
             }
         }
 

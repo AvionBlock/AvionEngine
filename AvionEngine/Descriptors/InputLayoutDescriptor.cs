@@ -1,4 +1,4 @@
-﻿namespace AvionEngine.Structures
+﻿namespace AvionEngine.Descriptors
 {
     public struct InputLayoutDescriptor
     {
